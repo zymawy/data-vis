@@ -1,65 +1,17 @@
-function ClimateChange() {
+class ClimateChange extends BaseVisualizer{
 
-  // Name for the visualisation to appear in the menu bar.
-  this.name = 'Climate Change';
+  constructor() {
+    super('climate-change', 'Climate Change', './../data/surface-temperature/surface-temperature.csv');
+    // Names for each axis.
+    this.xAxisLabel = 'year';
+    this.yAxisLabel = '℃';
+    this.marginSize = 35;
+    // Layout object to store all common plot layout parameters and
+    // methods.
+    this.prepare();
+  }
 
-  // Each visualisation must have a unique ID with no special
-  // characters.
-  this.id = 'climate-change';
-
-  // Names for each axis.
-  this.xAxisLabel = 'year';
-  this.yAxisLabel = '℃';
-
-  var marginSize = 35;
-
-  // Layout object to store all common plot layout parameters and
-  // methods.
-  this.layout = {
-    marginSize: marginSize,
-
-    // Locations of margin positions. Left and bottom have double margin
-    // size due to axis and tick labels.
-    leftMargin: marginSize * 2,
-    rightMargin: width - marginSize,
-    topMargin: marginSize,
-    bottomMargin: height - marginSize * 2,
-    pad: 5,
-
-    plotWidth: function() {
-      return this.rightMargin - this.leftMargin;
-    },
-
-    plotHeight: function() {
-      return this.bottomMargin - this.topMargin;
-    },
-
-    // Boolean to enable/disable background grid.
-    grid: false,
-
-    // Number of axis tick labels to draw so that they are not drawn on
-    // top of one another.
-    numXTickLabels: 8,
-    numYTickLabels: 8,
-  };
-
-  // Property to represent whether data has been loaded.
-  this.loaded = false;
-
-  // Preload the data. This function is called automatically by the
-  // gallery when a visualisation is added.
-  this.preload = function() {
-    var self = this;
-    this.data = loadTable(
-      './data/surface-temperature/surface-temperature.csv', 'csv', 'header',
-      // Callback function to set the value
-      // this.loaded to true.
-      function(table) {
-        self.loaded = true;
-      });
-  };
-
-  this.setup = function() {
+  setup () {
     // Font defaults.
     textSize(16);
     textAlign('center', 'center');
@@ -73,7 +25,7 @@ function ClimateChange() {
     this.maxTemperature = max(this.data.getColumn('temperature'));
 
     // Find mean temperature to plot average marker.
-    this.meanTemperature = mean(this.data.getColumn('temperature'));
+    this.meanTemperature = this.mean(this.data.getColumn('temperature'));
 
     // Count the number of frames drawn since the visualisation
     // started so that we can animate the plot.
@@ -94,12 +46,12 @@ function ClimateChange() {
     this.endSlider.position(600, 10);
   };
 
-  this.destroy = function() {
+  destroy() {
     this.startSlider.remove();
     this.endSlider.remove();
   };
 
-  this.draw = function() {
+  draw () {
     if (!this.loaded) {
       console.log('Data not yet loaded');
       return;
@@ -113,17 +65,17 @@ function ClimateChange() {
     this.endYear = this.endSlider.value();
 
     // Draw all y-axis tick labels.
-    drawYAxisTickLabels(this.minTemperature,
+    this.drawYAxisTickLabels(this.minTemperature,
                         this.maxTemperature,
                         this.layout,
                         this.mapTemperatureToHeight.bind(this),
                         1);
 
     // Draw x and y axis.
-    drawAxis(this.layout);
+    this.drawAxis(this.layout);
 
     // Draw x and y axis labels.
-    drawAxisLabels(this.xAxisLabel,
+    this.drawAxisLabels(this.xAxisLabel,
                    this.yAxisLabel,
                    this.layout);
 
@@ -137,19 +89,19 @@ function ClimateChange() {
 
     // Plot all temperatures between startYear and endYear using the
     // width of the canvas minus margins.
-    var previous;
-    var numYears = this.endYear - this.startYear;
-    var segmentWidth = this.layout.plotWidth() / numYears;
+    let previous;
+    let numYears = this.endYear - this.startYear;
+    let segmentWidth = this.layout.plotWidth() / numYears;
 
     // Count the number of years plotted each frame to create
     // animation effect.
-    var yearCount = 0;
+    let yearCount = 0;
 
     // Loop over all rows but only plot those in range.
-    for (var i = 0; i < this.data.getRowCount(); i++) {
+    for (let i = 0; i < this.data.getRowCount(); i++) {
 
       // Create an object to store data for the current year.
-      var current = {
+      let current = {
         // Convert strings to numbers.
         'year': this.data.getNum(i, 'year'),
         'temperature': this.data.getNum(i, 'temperature')
@@ -178,19 +130,19 @@ function ClimateChange() {
 
         // The number of x-axis labels to skip so that only
         // numXTickLabels are drawn.
-        var xLabelSkip = ceil(numYears / this.layout.numXTickLabels);
+        let xLabelSkip = ceil(numYears / this.layout.numXTickLabels);
 
         // Draw the tick label marking the start of the previous year.
-        if (yearCount % xLabelSkip == 0) {
-          drawXAxisTickLabel(previous.year, this.layout,
+        if (yearCount % xLabelSkip === 0) {
+          this.drawXAxisTickLabel(previous.year, this.layout,
                              this.mapYearToWidth.bind(this));
         }
 
         // When six or fewer years are displayed also draw the final
         // year x tick label.
         if ((numYears <= 6
-             && yearCount == numYears - 1)) {
-          drawXAxisTickLabel(current.year, this.layout,
+             && yearCount === numYears - 1)) {
+          this.drawXAxisTickLabel(current.year, this.layout,
                              this.mapYearToWidth.bind(this));
         }
 
@@ -221,7 +173,7 @@ function ClimateChange() {
     }
   };
 
-  this.mapYearToWidth = function(value) {
+  mapYearToWidth(value) {
     return map(value,
                this.startYear,
                this.endYear,
@@ -229,21 +181,50 @@ function ClimateChange() {
                this.layout.rightMargin);
   };
 
-  this.mapTemperatureToHeight = function(value) {
+  mapTemperatureToHeight(value) {
     return map(value,
                this.minTemperature,
                this.maxTemperature,
                this.layout.bottomMargin, // Lower temperature at bottom.
                this.layout.topMargin);   // Higher temperature at top.
   };
-
-  this.mapTemperatureToColour = function(value) {
-    var red =  map(value,
+  mapTemperatureToColour (value) {
+    let red =  map(value,
                    this.minTemperature,
                    this.maxTemperature,
                    0,
                    255);
-    var blue = 255 - red;
+    let blue = 255 - red;
     return color(red, 0, blue, 100);
   };
+
+  prepare() {
+
+    this.layout = {
+      marginSize: this.marginSize,
+
+      // Locations of margin positions. Left and bottom have double margin
+      // size due to axis and tick labels.
+      leftMargin: this.marginSize * 2,
+      rightMargin: width - this.marginSize,
+      topMargin: this.marginSize,
+      bottomMargin: height - this.marginSize * 2,
+      pad: 5,
+      plotWidth: function() {
+        return this.rightMargin - this.leftMargin;
+      },
+
+      plotHeight: function() {
+        return this.bottomMargin - this.topMargin;
+      },
+
+      // Boolean to enable/disable background grid.
+      grid: false,
+
+      // Number of axis tick labels to draw so that they are not drawn on
+      // top of one another.
+      numXTickLabels: 8,
+      numYTickLabels: 8,
+    };
+  }
 }
