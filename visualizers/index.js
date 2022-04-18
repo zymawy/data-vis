@@ -9,7 +9,8 @@
     PayGapByJob2017,
     PayGapTimeSeries,
     ClimateChange,
-    PieChart
+    PieChart,
+    Htmlable
 ].forEach((clss) => {
     Object.assign(clss.prototype, HelperMixins);
 });

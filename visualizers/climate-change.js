@@ -15,35 +15,11 @@ class ClimateChange extends BaseVisualizer{
     // Font defaults.
     textSize(16);
     textAlign('center', 'center');
-
-    // Set min and max years: assumes data is sorted by year.
-    this.minYear = this.data.getNum(0, 'year');
-    this.maxYear = this.data.getNum(this.data.getRowCount() - 1, 'year');
-
-    // Find min and max temperature for mapping to canvas height.
-    this.minTemperature = min(this.data.getColumn('temperature'));
-    this.maxTemperature = max(this.data.getColumn('temperature'));
-
-    // Find mean temperature to plot average marker.
-    this.meanTemperature = this.mean(this.data.getColumn('temperature'));
-
-    // Count the number of frames drawn since the visualisation
-    // started so that we can animate the plot.
-    this.frameCount = 0;
-
-    // Create sliders to control start and end years. Default to
-    // visualise full range.
-    this.startSlider = createSlider(this.minYear,
-                                    this.maxYear - 1,
-                                    this.minYear,
-                                    1);
-    this.startSlider.position(400, 10);
-
-    this.endSlider = createSlider(this.minYear + 1,
-                                  this.maxYear,
-                                  this.maxYear,
-                                  1);
-    this.endSlider.position(600, 10);
+    if (! this.isReady()) {
+      console.log('Data not yet loaded');
+      return;
+    }
+    this.prepareData()
   };
 
   destroy() {
@@ -52,9 +28,13 @@ class ClimateChange extends BaseVisualizer{
   };
 
   draw () {
-    if (!this.loaded) {
+    if (!this.isReady()) {
       console.log('Data not yet loaded');
       return;
+    }
+
+    if (! this.startSlider) {
+      this.prepareData()
     }
 
     // Prevent slider ranges overlapping.
@@ -226,5 +206,36 @@ class ClimateChange extends BaseVisualizer{
       numXTickLabels: 8,
       numYTickLabels: 8,
     };
+  }
+
+  prepareData () {
+    // Set min and max years: assumes data is sorted by year.
+    this.minYear = this.data.getNum(0, 'year');
+    this.maxYear = this.data.getNum(this.data.getRowCount() - 1, 'year');
+
+    // Find min and max temperature for mapping to canvas height.
+    this.minTemperature = min(this.data.getColumn('temperature'));
+    this.maxTemperature = max(this.data.getColumn('temperature'));
+
+    // Find mean temperature to plot average marker.
+    this.meanTemperature = this.mean(this.data.getColumn('temperature'));
+
+    // Count the number of frames drawn since the visualisation
+    // started so that we can animate the plot.
+    this.frameCount = 0;
+
+    // Create sliders to control start and end years. Default to
+    // visualise full range.
+    this.startSlider = createSlider(this.minYear,
+        this.maxYear - 1,
+        this.minYear,
+        1);
+    this.startSlider.position(400, 10);
+
+    this.endSlider = createSlider(this.minYear + 1,
+        this.maxYear,
+        this.maxYear,
+        1);
+    this.endSlider.position(600, 10);
   }
 }

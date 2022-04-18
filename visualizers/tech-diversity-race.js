@@ -12,17 +12,8 @@ class TechDiversityRace extends BaseVisualizer {
       console.log('Data not yet loaded');
       return;
     }
-
     // Create a select DOM element.
-    this.select = createSelect();
-    this.select.position(350, 40);
-
-    // Fill the options with all company names.
-    let companies = this.data.columns;
-    // First entry is empty.
-    for (let i = 1; i < companies.length; i++) {
-      this.select.option(companies[i]);
-    }
+    this.setupSelect()
   };
 
   destroy () {
@@ -30,9 +21,13 @@ class TechDiversityRace extends BaseVisualizer {
   };
 
   draw () {
-    if (!this.loaded) {
+    if (! this.isReady()) {
       console.log('Data not yet loaded');
       return;
+    }
+
+    if (! this.select) {
+      this.setupSelect()
     }
 
     // Get the value of the company we're interested in from the
@@ -57,4 +52,19 @@ class TechDiversityRace extends BaseVisualizer {
     // Draw the pie chart!
     this.pie.draw(col, labels, colours, title);
   };
+
+  setupSelect() {
+
+    if (this.select) {
+      return this.select;
+    }
+    this.select = P5Element.createSelect();
+    this.select.position(350, 40);
+    // Fill the options with all company names.
+    let companies = this.data.columns;
+    // First entry is empty.
+    for (let i = 1; i < companies.length; i++) {
+      this.select.option(companies[i]);
+    }
+  }
 }

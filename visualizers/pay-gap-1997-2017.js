@@ -17,22 +17,22 @@ class PayGapTimeSeries extends BaseVisualizer{
   setup () {
     // Font defaults.
     textSize(16);
-
-    // Set min and max years: assumes data is sorted by date.
-    this.startYear = this.data.getNum(0, 'year');
-    this.endYear = this.data.getNum(this.data.getRowCount() - 1, 'year');
-
-    // Find min and max pay gap for mapping to canvas height.
-    this.minPayGap = 0;         // Pay equality (zero pay gap).
-    this.maxPayGap = max(this.data.getColumn('pay_gap'));
+    if (! this.isReady()) {
+      console.log('Data not yet loaded');
+      return;
+    }
+    this.prepareData()
   };
 
   draw () {
-    if (!this.loaded) {
+    if (! this.isReady()) {
       console.log('Data not yet loaded');
       return;
     }
 
+    if (! this.maxPayGap) {
+      this.prepareData()
+    }
     // Draw the title above the plot.
     this.drawTitle();
 
@@ -148,5 +148,15 @@ class PayGapTimeSeries extends BaseVisualizer{
       numXTickLabels: 10,
       numYTickLabels: 8,
     };
+  }
+
+  prepareData() {
+    // Set min and max years: assumes data is sorted by date.
+    this.startYear = this.data.getNum(0, 'year');
+    this.endYear = this.data.getNum(this.data.getRowCount() - 1, 'year');
+
+    // Find min and max pay gap for mapping to canvas height.
+    this.minPayGap = 0;         // Pay equality (zero pay gap).
+    this.maxPayGap = max(this.data.getColumn('pay_gap'));
   }
 }
