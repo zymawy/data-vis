@@ -1,8 +1,12 @@
 class Htmlable {
     constructor(element = 'div', value = '', extra = {}) {
-        this._elementCreator = createElement(element, value);
-        // let's inital the perant to our main section for each element unless override it!
-        // see perant method.
+        if (typeof element === 'object') {
+            this._elementCreator = element;
+        } else {
+            this._elementCreator = createElement(element, value);
+        }
+        // let's initial the parent to our main section for each element unless override it!
+        // see parent method.
         this.parent(select('#app'))
     }
     /**
@@ -19,7 +23,16 @@ class Htmlable {
     }
 
     static  createSelect () {
-        return createSelect()
+        let select =  createSelect();
+
+
+        return new this.prototype.constructor(select);
+    }
+
+    option(value) {
+
+        this._elementCreator.option(value, value);
+        return this;
     }
 
     parent(parent) {
@@ -29,6 +42,15 @@ class Htmlable {
 
     id(id) {
         this._elementCreator.id(id);
+        return this;
+    }
+
+    changed(onSelectChanged) {
+        if (typeof onSelectChanged !== 'function') {
+            throw SyntaxError('It\\s Not A CallaBack!');
+        }
+        this._elementCreator.changed(onSelectChanged)
+
         return this;
     }
 
@@ -187,11 +209,14 @@ class Htmlable {
         return this._elementCreator.remove();
     }
 
-    value(value = null) {
+    value() {
 
-        return this._elementCreator.value(value);
+        return this._elementCreator.value();
     }
 
+    selected() {
+        return this._elementCreator.selected();
+    }
 
     show() {
 

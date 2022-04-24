@@ -58,8 +58,16 @@ class TechDiversityRace extends BaseVisualizer {
     if (this.select) {
       return this.select;
     }
-    this.select = P5Element.createSelect();
-    this.select.position(350, 40);
+    P5Element.make('label', 'Companies: ')
+    .attribute('for', this.id)
+    .parent(toolHolder);
+
+    this.select = P5Element.createSelect()
+    .id(this.id)
+    .addClass(this.id)
+    .addClass('input');
+    this.select.parent(toolHolder)
+
     // Fill the options with all company names.
     let companies = this.data.columns;
     // First entry is empty.

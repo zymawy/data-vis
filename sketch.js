@@ -4,6 +4,9 @@
 var gallery;
 var p5Element;
 var holder;
+var canvasWidth;
+var ulWrapper;
+var toolHolder;
 
 function setup() {
   // Create a canvas to fill the content div from index.html.
@@ -22,7 +25,10 @@ function setup() {
   .addClass('shadow-box')
   .getInstance();
 
-  createCanvas(1024,  576)
+
+  canvasWidth = min(holder.elt.offsetWidth, 1024);
+
+  createCanvas(canvasWidth,  776)
   .parent(holder);
 
   // lets create our lovely ul!
@@ -30,21 +36,38 @@ function setup() {
   .id("visuals-menu")
   .getInstance();
 
-  var ulWrapper = p5Element.make('div', '')
+  // let's create give a label for our menu area!
+  let menuHead = p5Element.make('h2', 'Menu')
+  .id('tool-header')
+  .addClass('tool-header')
+  .addClass('head')
+  .getInstance();
+
+  ulWrapper = p5Element.make('div', '')
+  .id('menu-holder')
   .addClass('menu-holder')
   .addClass('item-4')
   .addClass('shadow-box')
-  .child(ul)
+  .child(menuHead)
+  .child(ul);
+
+  // let's create give a label for our tool area!
+  let toolsHead = p5Element.make('h2', 'Tools ')
+  .addClass('tool-header')
+  .addClass('head')
   .getInstance();
 
   // tools holders
-  var toolHolder = p5Element.make('div', 'Tools ')
+  toolHolder = p5Element.make('div', '')
   .id('tool-wrapper')
   .addClass('tool-holder')
   .addClass('item')
   .addClass('item-9')
   .addClass('shadow-box')
+  .child(toolsHead)
   .getInstance();
+
+
 
   var splitter1 = p5Element.make('div', '')
   .addClass('gutter-col gutter-col-1')
@@ -58,7 +81,7 @@ function setup() {
   p5Element.make('div', '')
   .addClass('row')
   .addClass('grid')
-  .child(ulWrapper)
+  .child(ulWrapper.getInstance())
   .child(splitter1)
   .child(holder)
   .child(splitter2)
@@ -89,22 +112,20 @@ function setup() {
     dragInterval: 3,
     columnGutters: [{
       track: 1,
-      element: selectAll('.gutter-col-1').elt,
+      element: document.querySelector('.gutter-col-1'),
     }, {
       track: 3,
-      element: selectAll('.gutter-col-3').elt,
+      element: document.querySelector('.gutter-col-3'),
     }],
     onDragStart: (direction, track) => {
-      console.log(direction, track)
     },
     onDragEnd: (direction, track) => {
-      console.log('redrawing')
-      redraw()
+
     },
     onDrag: (direction, track) => {
-      resizeCanvas(holder.elt.clientWidth, 576, true);
-
-      gallery.selectedVisual.draw();
+      onResized()
+      // resizeCanvas(holder.elt.clientWidth, 576, true);
+      // gallery.selectedVisual.draw();
       // console.log()
     }
   })
@@ -116,8 +137,15 @@ function draw() {
     gallery.selectedVisual.draw();
   }
 }
-
+/**
+ * Called automatically when the window is resized.
+ */
 function windowResized() {
-  console.log(holder)
-  // resizeCanvas(windowWidth, windowHeight);
+  onResized()
+}
+
+
+function onResized() {
+  resizeCanvas(holder.elt.offsetWidth, 1024);
+  redraw()
 }

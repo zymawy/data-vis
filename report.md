@@ -1,7 +1,3 @@
-
-
-
-
 using advinced ES 6 syntex
 
     trasnform all the function expertions to class. 
@@ -10,19 +6,11 @@ using advinced ES 6 syntex
 
     using inhertince & inereinces to enhure the coanstinces 
 
-
-
 transforming all the `var` to `let` , `const` where appropatete 
-
-
-
-
 
  from Umair 
 
 [Slack](https://londoncs.slack.com/archives/CKNURNQKU/p1641175248185600?thread_ts=1641110207.176700&cid=CKNURNQKU)
-
-
 
 The mid term is mostly based on the planning the extension - to extract the requirements and plan out the implementation and start on it. focusing on a mindful approach.
 
@@ -47,5 +35,3 @@ The mid term is mostly based on the planning the extension - to extract the requ
 - write clean code and add comments
 
 The code does not need to be complete , just show how much you have worked on, and if you are on the right path and would be on time for final submissionUnless I am missing something, that should be it 
-
-
