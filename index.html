@@ -5,11 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Case study 2: Data visualisation</title>
-
     <!-- Libraries -->
-    <script src="lib/p5.min.js"></script>
+    <script src="lib/p5.js"></script>
+<!--    <script src="lib/p5.min.js"></script> @todo use min when sending to finals -->
     <script src="lib/p5.dom.min.js"></script>
     <!-- Main visualisation files -->
+    <script src="/lib/split-grid.js"></script>
+    <script src="/elements/htmlable.js"></script>
+    <script src="/elements/p5Element.js"></script>
     <script src="/visualizers/baseVisualizer.js"></script>
     <script src="/visualizers/tech-diversity-race.js"></script>
     <script src="/visualizers/tech-diversity-gender.js"></script>
@@ -20,7 +23,8 @@
     <script src="/mixins/helper-functions.js"></script>
     <script src="/visualizers/index.js"></script>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/normalize.css">
+    <link rel="stylesheet" href="styles/style.css">
 
     <!-- Main sketch file -->
     <script src="sketch.js"></script>
@@ -28,8 +32,7 @@
     <script src="gallery.js"></script>
   </head>
   <body>
-    <div id="app" class="container">
-      <ul id="visuals-menu"></ul>
-    </div>
+    <main id="app" class="container">
+    </main>
   </body>
 </html>

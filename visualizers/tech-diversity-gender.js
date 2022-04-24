@@ -20,7 +20,7 @@ class TechDiversityGender extends BaseVisualizer{
   };
 
   draw () {
-    if (!this.loaded) {
+    if (! this.isReady()) {
       console.log('Data not yet loaded');
       return;
     }

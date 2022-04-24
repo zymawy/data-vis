@@ -13,15 +13,15 @@ class BaseVisualizer {
 
     // Preload the data. This function is called automatically by the
     // gallery when a visualisation is added.
-    preload () {
-        this.data = loadTable(
+   async preload () {
+        await loadTable(
             this.data_path, 'csv', 'header',
             // Callback function to set the value
             // this.loaded to true.
             (table) => {
+                this.data = table;
                 this.loaded = true;
             });
-
     };
 
     has(property, type = null) {
@@ -50,5 +50,15 @@ class BaseVisualizer {
 
     throwError(method_name = null) {
         throw new Error(`You have to implement the method ${method_name}`);
+    }
+
+    isLoaded() {
+
+        return this.loaded;
+    }
+
+    isReady() {
+
+        return this.data && this.isLoaded()
     }
 }
