@@ -17,12 +17,17 @@ function setup() {
   .addClass('header')
   .addClass('shadow-box')
 
+  var header = p5Element.make('div', 'Header')
+  .addClass('canvas-header')
+  .getInstance();
+
   // let's make a wrapper for our canvas, to have more control of the canvas!
   holder = p5Element.make('div', '')
   .addClass('canvas-holder')
   .addClass('item')
   .addClass('item-9')
   .addClass('shadow-box')
+  .child(header)
   .getInstance();
 
 
@@ -100,9 +105,10 @@ function setup() {
   gallery.addVisual(new PayGapByJob2017());
   gallery.addVisual(new PayGapTimeSeries());
   gallery.addVisual(new ClimateChange());
+  gallery.addVisual(new WorldPopulation());
 
   if (getItem('selectedVisuals')) {
-    gallery.highLightSelected(getItem('selectedVisuals'))
+    // gallery.highLightSelected(getItem('selectedVisuals'))
   }
 
   Split({
@@ -146,6 +152,6 @@ function windowResized() {
 
 
 function onResized() {
-  resizeCanvas(holder.elt.offsetWidth, 1024);
-  redraw()
+  // resizeCanvas(holder.elt.offsetWidth, 1024);
+  // redraw()
 }

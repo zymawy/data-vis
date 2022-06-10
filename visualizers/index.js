@@ -10,7 +10,9 @@
     PayGapTimeSeries,
     ClimateChange,
     PieChart,
-    Htmlable
+    Htmlable,
+    WorldPopulation,
+    // SketchBase
 ].forEach((clss) => {
     Object.assign(clss.prototype, HelperMixins);
 });
