@@ -7,6 +7,7 @@ var holder;
 var canvasWidth;
 var ulWrapper;
 var toolHolder;
+var selectYears = null;
 
 function setup() {
   // Create a canvas to fill the content div from index.html.
@@ -30,9 +31,7 @@ function setup() {
   .child(header)
   .getInstance();
 
-
   canvasWidth = min(holder.elt.offsetWidth, 1024);
-
   createCanvas(canvasWidth,  776)
   .parent(holder);
 
@@ -93,7 +92,7 @@ function setup() {
   .child(toolHolder)
 
   // let get going and create our footer
-  p5Element.make('footer', 'All Copyright © Hamza Mohmmad')
+  p5Element.make('footer', 'All Copyright © Hamza Mohmmad #200104867')
   .addClass('footer')
 
   //Create a new gallery object.
@@ -108,7 +107,7 @@ function setup() {
   gallery.addVisual(new WorldPopulation());
 
   if (getItem('selectedVisuals')) {
-    // gallery.highLightSelected(getItem('selectedVisuals'))
+    gallery.highLightSelected(getItem('selectedVisuals'))
   }
 
   Split({
@@ -140,6 +139,17 @@ function setup() {
 function draw() {
   background(255);
   if (gallery.selectedVisual != null && gallery.selectedVisual.isReady()) {
+    let convasOne = document.getElementById('defaultCanvas0'),
+        convasTow = document.getElementById('defaultCanvas1');
+    if (gallery.selectedVisual.id === "world-population") {
+      convasOne.style.display ="none";
+      if (convasTow)
+          convasTow.style.display ="block";
+    } else {
+      convasOne.style.display ="block";
+      if (convasTow)
+          convasTow.style.display ="none";
+    }
     gallery.selectedVisual.draw();
   }
 }

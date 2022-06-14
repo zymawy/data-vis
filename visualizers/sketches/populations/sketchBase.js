@@ -5,6 +5,7 @@ class SketchBase {
     data;
     width;
     height;
+    sketch;
     constructor(sketch, data_path= null) {
         this.id = 'world-population'
         this.data_path = data_path || './../../../data/world-population/world-population.csv'
@@ -30,10 +31,17 @@ class SketchBase {
             // this.loaded to true.
             (table) => {
                 this.data = table;
+                this.data.years = this.data.columns.filter((b) => (!isNaN(b))).sort();
                 this.loaded = true;
+                // let's get going and notify our main class :)
+                const eventAwesome = new CustomEvent('data::set', {
+                    bubbles: true,
+                    detail: { data: () => this.data }
+                });
+                // let's dispatch it !
+                document.dispatchEvent(eventAwesome)
             });
     };
-
 
     has(property, type = null) {
         return ['function'].includes(type || '') ?
@@ -70,6 +78,13 @@ class SketchBase {
 
     /**
      *
+     */
+    getYears() {
+        return this.getData().years;
+    }
+
+    /**
+     *
      * @returns _main.default.Table|Table
      */
     getRows() {
@@ -81,6 +96,11 @@ class SketchBase {
         return this.getData().getColumns();
     }
 
+    getDataByColumn(column) {
+
+        return this.getData().getColumn(column);
+    }
+
     isLoaded() {
 
         return this.loaded;
@@ -88,7 +108,7 @@ class SketchBase {
 
     isReady() {
 
-        return this.data && this.isLoaded()
+        return this.data && this.isLoaded() && selectYears
     }
 
     getSketch() {
@@ -137,7 +157,7 @@ class SketchBase {
         this.getSketch().fill(0);
         this.getSketch().noStroke();
         textAlign('center', 'center');
-
+        // console.log(value, x)
         // Add tick label.
         this.getSketch().text(value,
             x,
@@ -179,5 +199,6 @@ class SketchBase {
                 this.getSketch().line(layout.leftMargin, y, layout.rightMargin, y);
             }
         }
+
     }
 }
