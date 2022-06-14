@@ -1,0 +1,86 @@
+body{
+    height: 100%;
+}
+
+.menu-item {
+    border: 1px solid gray;
+    list-style-type: none;
+    padding: 5px;
+}
+
+/*.container  {*/
+
+/*}*/
+
+.hover {
+    background: lightgray
+}
+
+.selected{
+    background: gold
+}
+
+
+.footer, .header {
+    z-index: 999;
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-bottom: 42px;
+}
+
+.shadow-box {
+    -webkit-box-shadow: 20px 20px 20px #c3c3c3;
+    -moz-box-shadow: 20px 20px 20px #c3c3c3;
+    box-shadow: 20px 20px 20px #c3c3c3;
+}
+
+.canvas-holder {
+    box-shadow: 2px 14px 20px 0 #c3c3c3;
+}
+
+#visuals-menu {
+    padding-right: 10px;
+    margin: 0;
+    flex-direction: row-reverse;
+}
+#tool-wrapper {
+    padding-left: 10px;
+    margin: 0;
+}
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 10px 6fr 10px 1fr;
+}
+
+.gutter-col {
+    grid-row: 1/-1;
+    cursor: col-resize;
+}
+
+.gutter-col-1 {
+    grid-column: 2;
+}
+
+.gutter-col-3 {
+    grid-column: 4;
+}
+
+
+.gutter-col,.gutter-row {
+    background-color: rgb(229, 231, 235);
+    background-repeat: no-repeat;
+    background-position: 50%
+}
+
+.gutter-col {
+    grid-row: 1/-1;
+    cursor: col-resize;
+    background-image: url(/images/vertical.png)
+}
+
+.gutter-row {
+    grid-column: 1/-1;
+    cursor: row-resize;
+    background-image: url(/images/horizontal.png)
+}
