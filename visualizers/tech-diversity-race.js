@@ -5,6 +5,8 @@ class TechDiversityRace extends BaseVisualizer {
     super('tech-diversity-race', 'Tech Diversity: Race', './../data/tech-diversity/race-2018.csv');
     // Create a new pie chart object.
     this.pie = new PieChart(width / 2, height / 2, width * 0.4);
+
+    this.cololurs = {'white': '#fff7f7', 'asian': '#e59572', 'latino': '#d9534f', 'black':'#17223b', 'multi': '#ffb549', 'other': '#ED5485'};
   }
 
   setup () {
@@ -44,13 +46,15 @@ class TechDiversityRace extends BaseVisualizer {
     let labels = this.data.getColumn(0);
 
     // Colour to use for each category.
-    let colours = ['blue', 'red', 'green', 'pink', 'purple', 'yellow'];
+    let colours = ['#fff7f7', '#e59572', '#d9534f', '#17223b', '#ffb549', '#ED5485'];
 
     // Make a title.
     let title = 'Employee diversity at ' + companyName;
 
+    push();
     // Draw the pie chart!
-    this.pie.draw(col, labels, colours, title);
+    this.pie.setColor(this.cololurs[col]).setCompanyName(companyName).draw(col, labels, colours, title);
+    pop()
   };
 
   setupSelect() {

@@ -17,20 +17,20 @@ class Gallery {
         }
         this.visuals.push(vis);
         // Create menu item.
-        let menuItem =  P5Element.make('li',  vis.name)
-        .addClass('menu-item')
-        .id(vis.id)
-        .mouseOver(function (e) {
-            let el = select('#' + e.target.id);
-            el.addClass("hover");
-        })
-        .mouseOut(function (e) {
-            let el = select('#' + e.target.id);
-            el.removeClass("hover");
-        }).mouseClicked( (e) => {
-            //remove selected class from any other menu-items
-            this.highLightSelected(e.target.id)
-        }).getInstance();
+        let menuItem = P5Element.make('li', vis.name)
+            .addClass('menu-item')
+            .id(vis.id)
+            .mouseOver(function (e) {
+                let el = select('#' + e.target.id);
+                el.addClass("hover");
+            })
+            .mouseOut(function (e) {
+                let el = select('#' + e.target.id);
+                el.removeClass("hover");
+            }).mouseClicked((e) => {
+                //remove selected class from any other menu-items
+                this.highLightSelected(e.target.id)
+            }).getInstance();
 
         let visMenu = select('#visuals-menu');
         visMenu.child(menuItem);
@@ -68,9 +68,9 @@ class Gallery {
             // let's save the last selected visuals to initials it once the application is initials
             storeItem('selectedVisuals', visId);
 
-            // if (this.selectedVisual.hasMethod('preload')) {
-            //     this.selectedVisual.preload();
-            // }
+            if (this.selectedVisual.hasMethod('preload')) {
+                this.selectedVisual.preload();
+            }
             // Initialise visualisation if necessary.
             if (this.selectedVisual.hasMethod('setup')) {
                 this.selectedVisual.setup();
