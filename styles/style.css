@@ -1,0 +1,155 @@
+body{
+    height: 100%;
+}
+
+/** Grid System **/
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 10px 5fr 10px 1fr;
+    height: 810px;
+}
+
+.gutter-col {
+    grid-row: 1/-1;
+    cursor: col-resize;
+}
+.gutter-col-1 {
+    grid-column: 2;
+}
+.gutter-col-3 {
+    grid-column: 4;
+}
+.gutter-col,.gutter-row, .world-gutter-col,.world-gutter-row  {
+    background-color: rgb(229, 231, 235);
+    background-repeat: no-repeat;
+    background-position: 50%
+}
+.gutter-col {
+    grid-row: 1/-1;
+    cursor: col-resize;
+    background-image: url(/images/vertical.png)
+}
+.gutter-row {
+    grid-column: 1/-1;
+    cursor: row-resize;
+    background-image: url(/images/horizontal.png)
+}
+
+
+.menu-item {
+    border: 1px solid gray;
+    list-style-type: none;
+    padding: 5px;
+}
+
+.hover {
+    background: lightgray;
+    cursor: pointer;
+}
+
+.selected{
+    background: gold
+}
+
+ /*footer and header */
+.footer, .header {
+    z-index: 999;
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-bottom: 35px;
+}
+
+
+ /*card style*/
+.shadow-box {
+    -webkit-box-shadow: 20px 20px 20px #c3c3c3;
+    -moz-box-shadow: 20px 20px 20px #c3c3c3;
+    box-shadow: 20px 20px 20px #c3c3c3;
+}
+
+.canvas-holder {
+    box-shadow: 2px 14px 20px 0 #c3c3c3;
+    padding: 0;
+    overflow: scroll;
+    min-width: 100%;
+}
+
+.canvas-header {
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.p5Canvas {
+
+}
+
+#visuals-menu {
+    flex-direction: row-reverse;
+    padding: 0;
+    margin: 0 10px 0 10px;
+}
+
+/*tools area */
+#tool-wrapper, .menu-holder {
+    padding: 0 10px 0 10px
+}
+
+.head{
+    border: 1px solid #ddd;
+    border-radius: 1px;
+    padding: 3px;
+    margin: 0 0 10px;
+    text-align: center;
+}
+
+
+/*input area*/
+
+.input {
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+
+label {
+    text-align: left;
+}
+
+canvas {
+    display: block;
+}
+
+
+.world-grid {
+    display: grid;
+    grid-template-rows: 1fr 10px 1fr;
+    grid-template-columns: 1fr 10px 1fr;
+    height: 100%;
+}
+
+.world-gutter-col {
+    grid-row: 1/-1;
+    cursor: col-resize;
+    background-image: url(/images/vertical.png)
+}
+
+.world-gutter-col-1 {
+    grid-column: 2;
+}
+
+.world-gutter-row {
+    grid-column: 1/-1;
+    cursor: row-resize;
+    background-image: url(/images/horizontal.png)
+}
+
+.world-gutter-row-1 {
+    grid-row: 2;
+}
