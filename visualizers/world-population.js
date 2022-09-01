@@ -12,22 +12,47 @@ class WorldPopulation extends BaseVisualizer {
         this.t = 0;
 
         this.boxes = [];
-        this.years = [];
+        this.years = ['1970', '1980', '1990', '2000', '2010', '2015', '2020', '2022', '2030', '2050'];
+
+        this.sketches = [];
+        this.options = [3, 5, 7, 9, 11, 14];
 
     }
 
     destroy() {
         this.mySelect.remove();
-        selectYears = null;
+        this.optionSelect.remove();
+
+        // let's remove our instance mode sketches!
+        this.sketches.forEach((p) => p.remove());
+        document.getElementById('world-grid').remove();
+        //document.getElementById('tool-wrapper').remove();
+        // toolHolder.remove()
+    };
+    async preload() {
+        await loadTable(
+            this.data_path, 'csv', 'header',
+            // Callback function to set the value
+            // this.loaded to true.
+            (table) => {
+                dataTesting = this.data = table;
+                this.numRows = this.data.getRowCount();
+                this.numCols = this.data.getColumnCount();
+
+
+                // console.trace();
+                this.loaded = true;
+                // let's get going and notify our main class :)
+                const eventAwesome = new CustomEvent('data::set', {
+                    bubbles: true,
+                    detail: { data: () => this.data, rawData: () => this.rawData }
+                });
+                // let's dispatch it !
+                document.dispatchEvent(eventAwesome)
+            });
     };
 
     setup() {
-        // let's quickly initialize our tools for global usages
-        document.addEventListener('data::set', ({ detail }) => {
-            console.log(detail.data().years);
-            this.years = detail.data().years;
-        })
-
         var firstDiv = p5Element.make('div', '')
             .id('population-race')
             .addClass('population-race')
@@ -60,6 +85,7 @@ class WorldPopulation extends BaseVisualizer {
         p5Element.make('div', '')
             .addClass('row')
             .addClass('world-grid')
+            .id('world-grid')
             .child(firstDiv)
             .child(gutterCol)
             .child(secondDiv)
@@ -69,12 +95,25 @@ class WorldPopulation extends BaseVisualizer {
             .parent(holder)
             .getInstance();
 
+        // initales the tools !
+        this.setupSelect()
+        this.setupSelectOption()
+        this.setupSelectOrder()
+
         // let's get going and use instant mode
         // so can have more maintenances and readability for our sketches
-        new p5(PopulationRace.make, 'population-race')
-        new p5(PopulationComparison.make, 'population-comparison')
-        new p5(PopulationBubble.make, 'population-bubble')
-        new p5(PopulationSimple.make, 'population-simple')
+
+        let p5PopulationRace = PopulationRace.make(this.data);
+        this.sketches.push(new p5(p5PopulationRace, 'population-race'));
+
+        let p5PopulationComparison = PopulationComparison.make(this.data);
+        this.sketches.push(new p5(p5PopulationComparison, 'population-comparison'));
+
+        let p5PopulationBubble = PopulationBubble.make(this.data);
+        this.sketches.push(new p5(p5PopulationBubble, 'population-bubble'));
+
+        let p5PopulationSimple = PopulationSimple.make(this.data)
+        this.sketches.push(new p5(p5PopulationSimple, 'population-simple'));
 
 
         Split({
@@ -103,22 +142,13 @@ class WorldPopulation extends BaseVisualizer {
     }
 
     draw() {
-        if (!this.isReady()) {
-            console.log('Data not yet loaded');
-            return;
-        }
-        // let's inietalse our data gloable tools to be used on our instance mode extastions
-        if (!this.mySelect || (!this.mySelect && this.years)) {
-            this.setupSelect()
-        }
+        push();
+
+        pop();
     };
 
 
     setupSelect() {
-
-        if (this.mySelect && this.years) {
-            return this.mySelect;
-        }
         P5Element.make('label', 'Years: ')
             .attribute('for', this.id)
             .parent(toolHolder);
@@ -137,13 +167,80 @@ class WorldPopulation extends BaseVisualizer {
         }
     }
 
-    changed() {
+    setupSelectOption() {
 
-        const eventAwesome = new CustomEvent('select::value', {
+        P5Element.make('label', 'Options: ')
+            .attribute('for', `option-${this.id}`)
+            .parent(toolHolder);
+
+        this.optionSelect = P5Element.createSelect()
+            .id(`option-${this.id}`)
+            .addClass(`option-${this.id}`)
+            .addClass('input');
+
+        this.optionSelect.parent(toolHolder)
+
+        this.optionSelect.changed(this.optionChanged)
+
+        // Fill the options with years.
+        for (let i = 0; i < this.options.length; i++) {
+            this.optionSelect.option(this.options[i]);
+        }
+
+        this.optionSelect.selected('11');
+    }
+
+    setupSelectOrder() {
+
+        P5Element.make('label', 'Order: ')
+            .attribute('for', `order-${this.id}`)
+            .parent(toolHolder);
+
+        this.orderSelect = P5Element.createSelect()
+            .id(`order-${this.id}`)
+            .addClass(`order-${this.id}`)
+            .addClass('input');
+
+        this.orderSelect.parent(toolHolder)
+
+        this.orderSelect.changed(this.orderChanged)
+
+        // Fill the options with years.
+        let orders = ['asc', 'desc'];
+        for (let i = 0; i < orders.length; i++) {
+            this.orderSelect.option(orders[i]);
+        }
+
+        this.orderSelect.selected('desc');
+    }
+
+    changed(e) {
+
+        const eventSelectYear = new CustomEvent('select::value', {
             bubbles: true,
-            detail: { value: () => this.mySelect.value() }
+            detail: { value: () => e.target.value }
         });
         // let's dispatch it !
-        document.dispatchEvent(eventAwesome)
+        document.dispatchEvent(eventSelectYear)
+    }
+
+    optionChanged(e) {
+
+        const eventSelectOption = new CustomEvent('select::option-value', {
+            bubbles: true,
+            detail: { value: () => e.target.value }
+        });
+        // let's dispatch it !
+        document.dispatchEvent(eventSelectOption)
+    }
+
+    orderChanged(e) {
+
+        const eventSelectOption = new CustomEvent('select::order-value', {
+            bubbles: true,
+            detail: { value: () => e.target.value }
+        });
+        // let's dispatch it !
+        document.dispatchEvent(eventSelectOption)
     }
 }

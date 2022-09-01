@@ -108,11 +108,11 @@ function setup() {
 
   // let's check if we have a selected prevuse gallary
   // and curry on with last selected one
-  if (getItem('selectedVisuals')) {
-    gallery.highLightSelected(getItem('selectedVisuals'))
-  } else {
-    gallery.highLightSelected('world-population')
-  }
+  // if (getItem('selectedVisuals')) {
+  //   // gallery.highLightSelected(getItem('selectedVisuals'))
+  // } else {
+  // gallery.highLightSelected('world-population')
+  // }
 
   Split({
     minSize: 300,

@@ -68,7 +68,7 @@ class Gallery {
             // let's save the last selected visuals to initials it once the application is initials
             storeItem('selectedVisuals', visId);
 
-            if (this.selectedVisual.hasMethod('preload')) {
+            if (this.selectedVisual.hasMethod('preload') && this.selectedVisual.id != visIndex) {
                 this.selectedVisual.preload();
             }
             // Initialise visualisation if necessary.

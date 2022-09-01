@@ -1,4 +1,4 @@
-class ClimateChange extends BaseVisualizer{
+class ClimateChange extends BaseVisualizer {
 
   constructor() {
     super('climate-change', 'Climate Change', './../data/surface-temperature/surface-temperature.csv');
@@ -11,11 +11,11 @@ class ClimateChange extends BaseVisualizer{
     this.prepare();
   }
 
-  setup () {
+  setup() {
     // Font defaults.
     textSize(16);
     textAlign('center', 'center');
-    if (! this.isReady()) {
+    if (!this.isReady()) {
       console.log('Data not yet loaded');
       return;
     }
@@ -27,13 +27,13 @@ class ClimateChange extends BaseVisualizer{
     this.endSlider.remove();
   };
 
-  draw () {
+  draw() {
     if (!this.isReady()) {
       console.log('Data not yet loaded');
       return;
     }
 
-    if (! this.startSlider) {
+    if (!this.startSlider) {
       this.prepareData()
     }
 
@@ -46,26 +46,26 @@ class ClimateChange extends BaseVisualizer{
 
     // Draw all y-axis tick labels.
     this.drawYAxisTickLabels(this.minTemperature,
-                        this.maxTemperature,
-                        this.layout,
-                        this.mapTemperatureToHeight.bind(this),
-                        1);
+      this.maxTemperature,
+      this.layout,
+      this.mapTemperatureToHeight.bind(this),
+      1);
 
     // Draw x and y axis.
     this.drawAxis(this.layout);
 
     // Draw x and y axis labels.
     this.drawAxisLabels(this.xAxisLabel,
-                   this.yAxisLabel,
-                   this.layout);
+      this.yAxisLabel,
+      this.layout);
 
     // Plot average line.
     stroke(200);
     strokeWeight(1);
     line(this.layout.leftMargin,
-         this.mapTemperatureToHeight(this.meanTemperature),
-         this.layout.rightMargin,
-         this.mapTemperatureToHeight(this.meanTemperature));
+      this.mapTemperatureToHeight(this.meanTemperature),
+      this.layout.rightMargin,
+      this.mapTemperatureToHeight(this.meanTemperature));
 
     // Plot all temperatures between startYear and endYear using the
     // width of the canvas minus margins.
@@ -88,25 +88,25 @@ class ClimateChange extends BaseVisualizer{
       };
 
       if (previous != null
-          && current.year > this.startYear
-          && current.year <= this.endYear) {
+        && current.year > this.startYear
+        && current.year <= this.endYear) {
 
         // Draw background gradient to represent colour temperature of
         // the current year.
         noStroke();
         fill(this.mapTemperatureToColour(current.temperature));
         rect(this.mapYearToWidth(previous.year),
-             this.layout.topMargin,
-             segmentWidth,
-             this.layout.plotHeight());
+          this.layout.topMargin,
+          segmentWidth,
+          this.layout.plotHeight());
 
         // Draw line segment connecting previous year to current
         // year temperature.
         stroke(0);
         line(this.mapYearToWidth(previous.year),
-             this.mapTemperatureToHeight(previous.temperature),
-             this.mapYearToWidth(current.year),
-             this.mapTemperatureToHeight(current.temperature));
+          this.mapTemperatureToHeight(previous.temperature),
+          this.mapYearToWidth(current.year),
+          this.mapTemperatureToHeight(current.temperature));
 
         // The number of x-axis labels to skip so that only
         // numXTickLabels are drawn.
@@ -115,15 +115,15 @@ class ClimateChange extends BaseVisualizer{
         // Draw the tick label marking the start of the previous year.
         if (yearCount % xLabelSkip === 0) {
           this.drawXAxisTickLabel(previous.year, this.layout,
-                             this.mapYearToWidth.bind(this));
+            this.mapYearToWidth.bind(this));
         }
 
         // When six or fewer years are displayed also draw the final
         // year x tick label.
         if ((numYears <= 6
-             && yearCount === numYears - 1)) {
+          && yearCount === numYears - 1)) {
           this.drawXAxisTickLabel(current.year, this.layout,
-                             this.mapYearToWidth.bind(this));
+            this.mapYearToWidth.bind(this));
         }
 
         yearCount++;
@@ -155,25 +155,25 @@ class ClimateChange extends BaseVisualizer{
 
   mapYearToWidth(value) {
     return map(value,
-               this.startYear,
-               this.endYear,
-               this.layout.leftMargin,   // Draw left-to-right from margin.
-               this.layout.rightMargin);
+      this.startYear,
+      this.endYear,
+      this.layout.leftMargin,   // Draw left-to-right from margin.
+      this.layout.rightMargin);
   };
 
   mapTemperatureToHeight(value) {
     return map(value,
-               this.minTemperature,
-               this.maxTemperature,
-               this.layout.bottomMargin, // Lower temperature at bottom.
-               this.layout.topMargin);   // Higher temperature at top.
+      this.minTemperature,
+      this.maxTemperature,
+      this.layout.bottomMargin, // Lower temperature at bottom.
+      this.layout.topMargin);   // Higher temperature at top.
   };
-  mapTemperatureToColour (value) {
-    let red =  map(value,
-                   this.minTemperature,
-                   this.maxTemperature,
-                   0,
-                   255);
+  mapTemperatureToColour(value) {
+    let red = map(value,
+      this.minTemperature,
+      this.maxTemperature,
+      0,
+      255);
     let blue = 255 - red;
     return color(red, 0, blue, 100);
   };
@@ -190,11 +190,11 @@ class ClimateChange extends BaseVisualizer{
       topMargin: this.marginSize,
       bottomMargin: height - this.marginSize * 2,
       pad: 5,
-      plotWidth: function() {
+      plotWidth: function () {
         return this.rightMargin - this.leftMargin;
       },
 
-      plotHeight: function() {
+      plotHeight: function () {
         return this.bottomMargin - this.topMargin;
       },
 
@@ -208,7 +208,7 @@ class ClimateChange extends BaseVisualizer{
     };
   }
 
-  prepareData () {
+  prepareData() {
     // Set min and max years: assumes data is sorted by year.
     this.minYear = this.data.getNum(0, 'year');
     this.maxYear = this.data.getNum(this.data.getRowCount() - 1, 'year');
@@ -227,15 +227,15 @@ class ClimateChange extends BaseVisualizer{
     // Create sliders to control start and end years. Default to
     // visualise full range.
     this.startSlider = createSlider(this.minYear,
-        this.maxYear - 1,
-        this.minYear,
-        1);
+      this.maxYear - 1,
+      this.minYear,
+      1);
     this.startSlider.position(400, 10);
 
     this.endSlider = createSlider(this.minYear + 1,
-        this.maxYear,
-        this.maxYear,
-        1);
+      this.maxYear,
+      this.maxYear,
+      1);
     this.endSlider.position(600, 10);
   }
 }

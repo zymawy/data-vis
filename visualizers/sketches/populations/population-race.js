@@ -1,7 +1,7 @@
 class PopulationRace extends SketchBase {
 
-    constructor(sketch) {
-        super(sketch);
+    constructor(sketch, data = []) {
+        super(sketch, null, data);
         this.id = 'population-race';
         this.width = document.querySelector('#' + this.id).offsetWidth;
         this.height = document.querySelector('#' + this.id).offsetHeight;
@@ -11,59 +11,71 @@ class PopulationRace extends SketchBase {
         this.dotSizeMax = 40;
         // target values
         this.values = [];
-// intermediate values
+        // intermediate values
         this.lerpValues = [];
-// index which will increase at regular intervals
+        // index which will increase at regular intervals
         this.index = 0;
         this.t = 0;
     }
 
-    setup () {
+    setup() {
+
         this.sketch.setup = () => {
             this.onResize();
         }
     }
 
-    draw () {
-
+    draw() {
+        push();
         this.sketch.draw = () => {
-            this.sketch.push();
-            // this.sketch.text('بسم الله الرحمن الرحيم',10,10)
-            if (! this.isReady()) {
-                return;
-            }
+            // this.sketch.text('بسم الله الرحمن الرحيم', this.width / 2, this.height / 2)
 
-            // console.log(this.getData().all())
-            // const sum = this.getRows().slice(0, 22).reduce((a, b) => a + b, 0);
-            this.getRows()
-            .slice(0, 22)
-            .filter((o) => {
-                return o.getString('1980')
-            }).sort((s, f) => {
-                return s.getString('rank') - f.getString('rank')
-            }).forEach((v, i) => {
-                // the width of each column
-                let v40 = 30;
-                this.sketch.rect(i * v40, this.height, v40, -v.getString('rank') * v.getString('rank') - 10);
-                this.sketch.fill(0, 200, 220);
+            let getCurrentSelectedYearData = this.getRawData()
+                .filter((e) => e.year == this.getSelectedYear())
+                .take(this.getSelectedOption())
+                .orderBy(['population'], [this.getSelectedOrder()]);
+
+            // let's get going and use histogram algrtom and calc the results...
+            let maxValue = getCurrentSelectedYearData.maxBy((e) => Number(e.population)).value().population;
+            let minValue = getCurrentSelectedYearData.minBy((e) => Number(e.population)).value().population;
+            let dominator = (maxValue - minValue);
+
+
+            // console.log(maxValue, minValue, this.getCurrentSelectedYearData());
+            // throw new Error('Debug');
+
+            getCurrentSelectedYearData.value().forEach((v, i) => {
+                let result = (v.population - minValue) / dominator;
+                let movement = i * 50;
+
+                result = result * this.height - 10; // sup 10 to give a space for icons :)
+                let v40 = 40;
+                this.sketch.rect(
+                    movement,
+                    this.height - 4,
+                    v40,
+                    -result
+                );
+
+                this.sketch.fill(PopulationRace.CSS_COLORS[v.rank]);
                 this.sketch.push();
-                this.sketch.translate(i * v40 + 10, this.height - 1 - v.getString('rank')- 10);
-                // this.sketch.rotate(radians(-25));
+                this.sketch.translate(movement + 10, this.height - (result) - 10);
+                this.sketch.rotate(radians(-25));
                 this.sketch.fill(0, 200, 220);
 
-                if (v.get('icon')) {
-                    this.sketch.text(v.getString('icon'), 0, 0);
+                if (v.icon) {
+                    this.sketch.smooth();
+                    this.sketch.text(v.icon, 0, 0);
+                    this.sketch.noSmooth();
                 }
                 this.sketch.pop();
             })
-            for (let i = 0; i < 15; i++) {
-            }
             if (this.t < 40) {
                 this.t = this.t + 1;
             }
-            this.sketch.pop();
             // throw new Error(`You have to implement the method make in order to use`);
         };
+        pop();
     }
 
     /**
@@ -71,7 +83,9 @@ class PopulationRace extends SketchBase {
      * @return this
      * @param sketch
      */
-    static make(sketch) {
-        return new  PopulationRace(sketch)
+    static make(data) {
+        return (sketch) => {
+            return new PopulationRace(sketch, data)
+        }
     }
 }

@@ -3,7 +3,7 @@ class BaseVisualizer {
     name; // Each visualisation must have a unique ID with no special characters.
     data_path; // Each visualisation must have a unique ID with no special characters.
     data;
-    loaded =false;
+    loaded = false;
 
     constructor(id, name, data_path) {
         this.id = id;
@@ -13,7 +13,7 @@ class BaseVisualizer {
 
     // Preload the data. This function is called automatically by the
     // gallery when a visualisation is added.
-   async preload () {
+    async preload() {
         await loadTable(
             this.data_path, 'csv', 'header',
             // Callback function to set the value
