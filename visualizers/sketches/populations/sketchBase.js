@@ -18,24 +18,11 @@ class SketchBase {
         this.data = data;
 
 
-        this.rawData = this.rawData = this.data.getRows().map((e) => {
-            return {
-                name: e.getString('name'),
-                growthRate: e.getNum('growthRate'),
-                worldPercentage: e.getNum('worldPercentage'),
-                // density: e.getString('density'),
-                rank: e.getNum('rank'),
-                population: e.getNum('puplistion'),
-                year: e.getNum('year'),
-                icon: e.getString('icon')
-            }
-        });
+        // this.preload();
 
-        this.preload();
-
-        document.addEventListener('splitter::resize', () => {
-            this.onResize();
-        })
+        // document.addEventListener('splitter::resize', () => {
+        //     this.onResize();
+        // })
 
         document.addEventListener('select::value', ({ detail }) => {
             this.selectedYear = detail.value();
@@ -50,8 +37,8 @@ class SketchBase {
             this.selectedOrder = detail.value();
         });
 
-        this.setup();
-        this.draw();
+        // this.setup();
+        // this.draw();
 
     }
 
@@ -92,6 +79,7 @@ class SketchBase {
     onResize() {
         this.convas = this.sketch.createCanvas(this.width, this.height);
         this.convas.id(`id-${this.id}`);
+		this.convas.parent(holder);
     }
 
     /**
@@ -223,28 +211,28 @@ class SketchBase {
      * @param layout - The layout object that contains the layout information.
      * @param mapFunction - A function that maps a value to a position on the x-axis.
      */
-    drawXAxisTickLabel(value, layout, mapFunction) {
-        // Map function must be passed with .bind(this).
-        var x = mapFunction(value);
-
-        this.getSketch().fill(0);
-        this.getSketch().noStroke();
-        textAlign('center', 'center');
-        // console.log(value, x)
-        // Add tick label.
-        this.getSketch().text(value,
-            x,
-            layout.bottomMargin + layout.marginSize / 2);
-
-        if (layout.grid) {
-            // Add grid line.
-            this.sketch.stroke(220);
-            this.sketch.line(x,
-                layout.topMargin,
-                x,
-                layout.bottomMargin);
-        }
-    }
+    // drawXAxisTickLabel(value, layout, mapFunction) {
+    //     // Map function must be passed with .bind(this).
+    //     var x = mapFunction(value);
+	//
+    //     this.getSketch().fill(0);
+    //     this.getSketch().noStroke();
+    //     textAlign('center', 'center');
+    //     // console.log(value, x)
+    //     // Add tick label.
+    //     this.getSketch().text(value,
+    //         x,
+    //         layout.bottomMargin + layout.marginSize / 2);
+	//
+    //     if (layout.grid) {
+    //         // Add grid line.
+    //         this.sketch.stroke(220);
+    //         this.sketch.line(x,
+    //             layout.topMargin,
+    //             x,
+    //             layout.bottomMargin);
+    //     }
+    // }
 
     /**
      * Draws the y-axis tick labels and grid lines

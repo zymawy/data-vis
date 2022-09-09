@@ -12,7 +12,20 @@
     PieChart,
     Htmlable,
     WorldPopulation,
+    PopulationRace,
+    PopulationSimple,
+    PopulationBubble,
+	PopulationComparison,
     // SketchBase
 ].forEach((clss) => {
     Object.assign(clss.prototype, HelperMixins);
+});
+
+[
+	PopulationRace,
+	PopulationSimple,
+	PopulationBubble,
+	PopulationComparison,
+].forEach((clss) => {
+	Object.assign(clss.prototype, new SketchBase());
 });

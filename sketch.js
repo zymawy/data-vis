@@ -18,12 +18,13 @@ function setup() {
     .addClass('header')
     .addClass('shadow-box')
 
-  var header = p5Element.make('div', 'Header')
+  let header = p5Element.make('div', 'Header')
     .addClass('canvas-header')
     .getInstance();
 
   // let's make a wrapper for our canvas, to have more control of the canvas!
   holder = p5Element.make('div', '')
+	  .id('canvas-holder')
     .addClass('canvas-holder')
     .addClass('item')
     .addClass('item-9')
@@ -31,9 +32,8 @@ function setup() {
     .child(header)
     .getInstance();
 
-  canvasWidth = min(holder.elt.offsetWidth, 1024);
-  createCanvas(canvasWidth, 776)
-    .parent(holder);
+  // canvasWidth = min(holder.elt.offsetWidth, 1024);
+  // createCanvas(canvasWidth, 776).parent(holder);
 
   // lets create our lovely ul!
   var ul = p5Element.make('ul', '')
@@ -54,6 +54,10 @@ function setup() {
     .addClass('shadow-box')
     .child(menuHead)
     .child(ul);
+
+	canvasWrapper = p5Element.make('div', '')
+		.id('canvas-holder')
+		.addClass('canvas-holder');
 
   // let's create give a label for our tool area!
   let toolsHead = p5Element.make('h2', 'Tools ')
@@ -91,8 +95,8 @@ function setup() {
     .child(splitter2)
     .child(toolHolder)
 
-  // let get going and create our footer
-  p5Element.make('footer', 'All Copyright © Hamza Mohmmad #200104867')
+  // let get going and create our footer All Copyright © Hamza Mohmmad #200104867
+  p5Element.make('footer', '')
     .addClass('footer')
 
   //Create a new gallery object.
@@ -104,7 +108,9 @@ function setup() {
   gallery.addVisual(new PayGapByJob2017());
   gallery.addVisual(new PayGapTimeSeries());
   gallery.addVisual(new ClimateChange());
-  gallery.addVisual(new WorldPopulation());
+  gallery.addVisual(new PopulationSimple());
+  gallery.addVisual(new PopulationBubble());
+  gallery.addVisual(new PopulationComparison());
 
   // let's check if we have a selected prevuse gallary
   // and curry on with last selected one
@@ -126,34 +132,15 @@ function setup() {
       track: 3,
       element: document.querySelector('.gutter-col-3'),
     }],
-    onDragStart: (direction, track) => {
-    },
-    onDragEnd: (direction, track) => {
-
-    },
     onDrag: (direction, track) => {
-      onResized()
-      // resizeCanvas(holder.elt.clientWidth, 576, true);
-      // gallery.selectedVisual.draw();
-      // console.log()
+      	onResized()
     }
   })
 }
 
 function draw() {
   background(255);
-  if (gallery.selectedVisual != null && gallery.selectedVisual.isReady()) {
-    let convasOne = document.getElementById('defaultCanvas0'),
-      convasTow = document.getElementById('defaultCanvas1');
-    if (gallery.selectedVisual.id === "world-population") {
-      convasOne.style.display = "none";
-      if (convasTow)
-        convasTow.style.display = "block";
-    } else {
-      convasOne.style.display = "block";
-      if (convasTow)
-        convasTow.style.display = "none";
-    }
+  if (gallery.selectedVisual != null) {
     gallery.selectedVisual.draw();
   }
 }
@@ -165,7 +152,10 @@ function windowResized() {
 }
 
 
+/**
+ * It creates a new event called `splitter::resize` and dispatches it
+ */
 function onResized() {
-  // resizeCanvas(holder.elt.offsetWidth, 1024);
-  // redraw()
+	const ResizeEvent = new CustomEvent('splitter::resize', {bubbles: true});
+	document.dispatchEvent(ResizeEvent);
 }

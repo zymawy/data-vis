@@ -1,128 +1,142 @@
-class PopulationBubble extends SketchBase {
+class PopulationBubble extends BaseVisualizer {
+	constructor() {
+		super('population-bubble', 'Population Bubble', './../data/world-population/world-population.csv');
+		this.id = 'population-bubble';
+		// this.width = document.querySelector('#' + this.id).offsetWidth;
+		// this.height = document.querySelector('#' + this.id).offsetHeight;
+		this.bubbles = [];
+		this.x = this.width / 2;
+		this.y = this.height / 2;
+		this.title = 'Welcome'
+	}
+	async preload() {
+		await loadTable(
+			this.data_path, 'csv', 'header',
+			// Callback function to set the value
+			// this.loaded to true.
+			(table) => {
+				dataTesting = this.data = table;
+				this.numRows = this.data.getRowCount();
+				this.numCols = this.data.getColumnCount();
 
-    constructor(sketch, data = []) {
-        super(sketch, null, data);
-        this.id = 'population-bubble';
-        this.width = document.querySelector('#' + this.id).offsetWidth;
-        this.height = document.querySelector('#' + this.id).offsetHeight;
-        this.bubbles = [];
-        this.x = this.width / 2;
-        this.y = this.height / 2;
-    }
 
-    // Preload the data. This function is called automatically by the
+				this.loaded = true;
+				// let's get going and notify our main class :)
+				const eventAwesome = new CustomEvent('data::set', {
+					bubbles: true,
+					detail: { data: () => this.data, rawData: () => this.rawData }
+				});
+				// let's dispatch it !
+				document.dispatchEvent(eventAwesome)
+			});
+	}
 
-    /**
-     *
-     * @return this
-     * @param sketch
-     */
-    static make(data) {
+	destroy() {
+		this.mySelect.remove();
+		this.optionSelect.remove();
+		this.orderSelect.remove();
+		this.bubbles = [];
+	};
 
-        return (sketch) => {
-            return new PopulationBubble(sketch, data)
-        }
-    }
-    setup() {
-        this.getSketch().setup = () => {
-            this.onResize();
-            document.addEventListener('select::value', ({ detail }) => {
-                this.prepare()
-            })
 
-            if (this.bubbles.length) {
-                this.prepare()
-            }
-        }
-    }
+	setup() {
+		this.onResize();
 
-    prepare() {
-        var that = this;
-        let getCurrentSelectedYearData = this.getRawData()
-            .filter((e) => e.year == this.getSelectedYear())
-            .take(this.getSelectedOption())
-            .orderBy(['population'], [this.getSelectedOrder()]);
+		this.rawData = this.data.getRows().map((e) => {
+			return new Row({
+				name: e.getString('name'),
+				growthRate: e.getNum('growthRate'),
+				worldPercentage: e.getNum('worldPercentage'),
+				// density: e.getString('density'),
+				rank: e.getNum('rank'),
+				population: e.getNum('puplistion'),
+				year: e.getNum('year'),
+				icon: e.getString('icon'),
+				ios: e.getString('ios-code')
+			});
+		});
 
-        // let's get going and use histogram algrtom and calc the results...
-        let maxValue = getCurrentSelectedYearData.maxBy((e) => Number(e.population)).value().population;
-        let minValue = getCurrentSelectedYearData.minBy((e) => Number(e.population)).value().population;
-        let dominator = (maxValue - minValue);
+		// initales the tools !
+		this.setupSelect()
+		this.setupSelectOption()
+		this.setupSelectOrder()
 
-        getCurrentSelectedYearData.value()
-            .forEach((country, index) => {
+		document.addEventListener('select::value', ({ detail }) => {
+			this.selectedYear = detail.value();
+			this.prepare()
+		});
+		document.addEventListener('select::option-value', ({ detail }) => {
+			this.selectedOption = detail.value();
+			this.prepare()
+		});
+		document.addEventListener('select::order-value', ({ detail }) => {
+			this.selectedOrder = detail.value();
+			this.prepare()
+		});
 
-                if (country.name) {
-                    let size = (country.population - minValue) / dominator;
-                    // todo make Bubble a class! for more readability
-                    let b = {};
-                    b.size = size / 2;
-                    b.pos = createVector(0, 0, 0);
-                    b.direction = createVector(0, 0, 0);
-                    b.name = country.name + " " + country.icon;
-                    b.color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
-                    //draw the bubble and names
-                    b.draw = function () {
-                        that.getSketch().push();
-                        that.getSketch().noStroke();
-                        that.getSketch().fill(this.color);
-                        that.getSketch().ellipse(this.pos.x, this.pos.y, this.size);
-                        that.getSketch().fill(0);
-                        that.getSketch().textAlign(CENTER, CENTER);
-                        that.getSketch().textStyle(BOLDITALIC);
-                        that.getSketch().textSize(15);
-                        that.getSketch().text(this.name, this.pos.x, this.pos.y);
-                        that.getSketch().pop();
-                    }
-                    //update the bubbles directions
-                    b.update = function (_bubbles) {
-                        this.direction.set(0, 0, 0);
-                        for (var i = 0; i < _bubbles.length; i++) {
-                            if (_bubbles[i].name !== this.name) {
-                                var v = p5.Vector.sub(this.pos, _bubbles[i].pos);
-                                // throw new Error(`You have to implement the method make in order to use `);
-                                var d = v.mag();
-                                if (d < this.size / 2 + 30 + _bubbles[i].size / 2) {
-                                    d > 0 ? this.direction.add(v) : this.direction.add(p5.Vector.random2D());
-                                }
-                            }
-                        }
-                        this.direction.normalize();
-                        this.direction.mult(2);
-                        this.pos.add(this.direction);
-                    } // end of update inner function
+		this.prepare()
+	}
 
-                    this.bubbles.push(b);
-                } // end of if
-            });
-    }
+	draw() {
+		if (!this.loaded) {
+			console.log('Data not yet loaded');
+			return;
+		}
 
-    draw() {
+		for (var i = 0; i < this.bubbles.length; i++) {
+			console.log(this.bubbles[i]);
+			this.bubbles[i].update(this.bubbles);
+		}
 
-        this.getSketch().draw = () => {
-            this.getSketch().push();
-            if (!this.isReady()) {
-                return;
-            }
+		for (var i = 0; i < this.bubbles.length; i++) {
+			this.bubbles[i].draw();
+		}
+	}
 
-            if (!this.bubbles.length) {
-                this.prepare();
-            }
-            // Draw the bubbles.
-            this.getSketch().translate(this.width / 2, this.height / 2);
-            for (var i = 0; i < this.bubbles.length; i++) {
-                this.bubbles[i].update(this.bubbles);
-                this.bubbles[i].draw();
-                if (i === this.bubbles.length - 1) {
-                    break;
-                } // ends the loop when the loop counter i=16.
-            }
+	/**
+	 * "When the window is resized, create a new canvas with the new width and height."
+	 *
+	 * The `createCanvas()` function is a built-in function in p5.js. It creates a new canvas with the specified width and
+	 * height
+	 */
+	onResize() {
+		this.convas = createCanvas(1200, 700);
+		this.convas.id(`id-${this.id}`);
+		this.convas.parent(holder)
+	}
 
-            this.sketch.pop()
-        };
-    }
+	prepare() {
 
-    // to clear the canvas
-    destroy() {
-        this.bubbles = [];
-    }
+		console.log('Welromv')
+		this.bubbles = [];
+
+		this.selectedOrder ='desc';
+		let getCurrentSelectedYearData = this.getCurrentSelectedYearData(),
+			maxP = getCurrentSelectedYearData.maxBy((e) => Number(e.get('population'))).value(),
+			minP = getCurrentSelectedYearData.minBy((e) => Number(e.get('population'))).value();
+
+		this.minPopulation = this.getMinValue();
+		this.maxPopulation = this.getMaxValue();
+		this.dominator = (this.maxPopulation - this.minPopulation);
+
+		getCurrentSelectedYearData = getCurrentSelectedYearData.value();
+
+		this.x = width /2 ;
+		this.y = height/2;
+		for(var i = 0; i < getCurrentSelectedYearData.length; i++)
+		{
+			let pup = getCurrentSelectedYearData[i];
+			this.bubbles.push(new Bubble(
+				random(100 ,width-100),
+				random(100, height-100),
+					pup,
+					pup.population(),
+					color(random(100,255),random(100,255),random(100,255)),
+					{max:maxP.population(), min: minP.population(),dominator: this.dominator}
+				)
+			);
+		}
+
+		// noLoop()
+	}
 }

@@ -15,10 +15,7 @@ class ClimateChange extends BaseVisualizer {
     // Font defaults.
     textSize(16);
     textAlign('center', 'center');
-    if (!this.isReady()) {
-      console.log('Data not yet loaded');
-      return;
-    }
+
     this.prepareData()
   };
 

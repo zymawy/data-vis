@@ -137,4 +137,10 @@ const HelperMixins = {
                 layout.bottomMargin);
         }
     },
+
+	dd(...value) {
+		console.log(value);
+
+		throw new Error('Log');
+	}
 }

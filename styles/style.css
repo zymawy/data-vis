@@ -71,8 +71,8 @@ body{
 .canvas-holder {
     box-shadow: 2px 14px 20px 0 #c3c3c3;
     padding: 0;
-    overflow: scroll;
-    min-width: 100%;
+    /*overflow: scroll;*/
+    /*min-width: 100%;*/
 }
 
 .canvas-header {

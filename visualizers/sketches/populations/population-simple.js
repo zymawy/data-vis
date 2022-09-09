@@ -1,79 +1,197 @@
-class PopulationSimple extends SketchBase {
-    constructor(sketch, data = []) {
-        super(sketch, null, data);
-        this.id = 'population-simple';
-        this.width = document.querySelector('#' + this.id).offsetWidth;
-        this.height = document.querySelector('#' + this.id).offsetHeight;
-    }
+class PopulationSimple extends BaseVisualizer {
+	constructor() {
+		super('population-simple', 'Population Simple', './../data/world-population/world-population.csv');
+		// Graph properties.
+		this.pad = 20;
+		this.dotSizeMin = 15;
+		this.dotSizeMax = 40;
+		this.marginSize = 35;
+		// target values
+		this.values = [];
+		// index which will increase at regular intervals
+		this.index = 0;
+		this.t = 0;
 
-    setup() {
-        this.getSketch().setup = () => {
-            this.onResize();
-        }
-    }
+		this.boxes = [];
 
-    draw() {
-        push();
-        this.sketch.draw = () => {
-            // this.sketch.text('بسم الله الرحمن الرحيم', this.width / 2, this.height / 2)
+	}
 
-            let getCurrentSelectedYearData = this.getRawData()
-                .filter((e) => e.year == this.getSelectedYear())
-                .take(this.getSelectedOption())
-                .orderBy(['population'], [this.getSelectedOrder()]);
+	destroy() {
+		this.mySelect.remove();
+		this.optionSelect.remove();
+		this.orderSelect.remove();
+	};
+	async preload() {
+		await loadTable(
+			this.data_path, 'csv', 'header',
+			// Callback function to set the value
+			// this.loaded to true.
+			(table) => {
+				dataTesting = this.data = table;
+				this.numRows = this.data.getRowCount();
+				this.numCols = this.data.getColumnCount();
 
-            // let's get going and use histogram algrtom and calc the results...
-            let maxValue = getCurrentSelectedYearData.maxBy((e) => Number(e.population)).value().population;
-            let minValue = getCurrentSelectedYearData.minBy((e) => Number(e.population)).value().population;
-            let dominator = (maxValue - minValue);
+				// console.trace();
+				this.loaded = true;
+				// let's get going and notify our main class :)
+				const eventAwesome = new CustomEvent('data::set', {
+					bubbles: true,
+					detail: { data: () => this.data, rawData: () => this.rawData }
+				});
+				// let's dispatch it !
+				document.dispatchEvent(eventAwesome)
+			});
+	};
+
+	setup() {
+
+		this.rawData = this.data.getRows().map((e) => {
+			return new Row({
+				name: e.getString('name'),
+				growthRate: e.getNum('growthRate'),
+				worldPercentage: e.getNum('worldPercentage'),
+				// density: e.getString('density'),
+				rank: e.getNum('rank'),
+				population: e.getNum('puplistion'),
+				year: e.getNum('year'),
+				icon: e.getString('icon'),
+				ios: e.getString('ios-code')
+			});
+		});
+
+		// initales the tools !
+		this.setupSelect()
+		this.setupSelectOption()
+		this.setupSelectOrder()
+
+		// Names for each axis.
+		this.xAxisLabel = 'Countries';
+		this.yAxisLabel = 'Population';
+		this.marginSize = 15;
+		// Width of vertical bar.
+		this.barWidth = 3;
+		// Colors for vertical bar
+		this.colorList = ['red', 'orange','green','blue', 'gray'];
+		// labels
+		this.labelSpace = 45;
+		// Layout object to store all common plot layout parameters and
+		// methods.
+		this.layout = {
+			marginSize: this.marginSize,
+			// Locations of margin positions. Left and bottom have double margin
+			// size due to axis and tick labels.
+			leftMargin: this.marginSize * 5,
+			rightMargin: width - this.marginSize/2,
+			topMargin: this.marginSize,
+			bottomMargin: height - this.marginSize*2,
+			pad: 5,
+
+			plotWidth: function() {
+				return this.rightMargin - this.leftMargin;
+			},
+
+			plotHeight: function() {
+				return this.bottomMargin - this.topMargin;
+			},
+
+			// Boolean to enable/disable background grid.
+			grid: true,
+			numXTickLabels: 13,
+			numYTickLabels: 10,
+		};
+
+		// Min and max visitors for mapping to canvas height.
+		this.minYear = 0;
+		this.maxYear = 0;
 
 
-            // console.log(maxValue, minValue, this.getCurrentSelectedYearData());
-            // throw new Error('Debug');
+	}
 
-            getCurrentSelectedYearData.value().forEach((v, i) => {
-                let result = (v.population - minValue) / dominator;
-                let movement = i * 50;
+	draw() {
 
-                result = result * this.height - 10; // sup 10 to give a space for icons :)
-                let v40 = 40;
-                this.sketch.rect(
-                    movement,
-                    this.height - 4,
-                    v40,
-                    -result
-                );
+		let year = this.getSelectedYear();
+		let dateYear = this.getDataByColumn(year);
+		this.minYear = dateYear.min();
+		this.maxYear = dateYear.max();
 
-                this.sketch.fill(PopulationRace.CSS_COLORS[v.rank]);
-                this.sketch.push();
-                this.sketch.translate(movement + 10, this.height - (result) - 10);
-                this.sketch.rotate(radians(-25));
-                this.sketch.fill(0, 200, 220);
+		// let's get going and use histogram algrtom and calc the results...
+		this.maxPopulation = this.getMaxValue();
+		this.minPopulation = this.getMinValue();
+		let dominator = (this.maxPopulation - this.minPopulation);
+		let data = this.getCurrentSelectedYearData().value();
+		// // Draw all y-axis tick labels.
+		this.drawYAxisTickLabels(this.minPopulation,
+			this.maxPopulation,
+			this.layout,
+			this.mapTemperatureToHeight.bind(this),
+			1);
 
-                if (v.icon) {
-                    this.sketch.smooth();
-                    this.sketch.text(v.icon, 0, 0);
-                    this.sketch.noSmooth();
-                }
-                this.sketch.pop();
-            })
-            if (this.t < 40) {
-                this.t = this.t + 1;
-            }
-            // throw new Error(`You have to implement the method make in order to use`);
-        };
-        pop();
-    }
+		this.drawAxis(this.layout);
 
-    /**
-     *
-     * @return this
-     * @param sketch
-     */
-    static make(data) {
+		this.drawAxisLabels(this.xAxisLabel,
+			this.yAxisLabel,
+			this.layout);
 
-        return (sketch) => {
-            return new PopulationSimple(sketch, data)
-        }
-    }
+		this.meanPopulation = this.getCurrentSelectedYearData().sumBy((e) => e.population()).value() / data.length;
+		stroke(200);
+		strokeWeight(1);
+		line(this.layout.leftMargin,
+			this.mapTemperatureToHeight(this.meanPopulation),
+			this.layout.rightMargin,
+			this.mapTemperatureToHeight(this.meanPopulation));
+		let previous = null;
+		for (let i = 0; i < data.length; i++) {
+			fill(0, 200, 220);
+			let result = (data[i].population() - this.minPopulation) / dominator;
+			let movement = i * 45;
+
+			result = result * this.layout.bottomMargin; // sup 10 to give a space for icons :)
+			let v40 = 40;
+			let ground = height - this.layout.topMargin - 17;
+			 result = (result > this.minPopulation ? height - this.layout.topMargin - 17: result);
+
+			rect(movement + this.layout.leftMargin,
+				ground,
+				v40,
+				-min(result, ground));
+			fill(0, 200, 220);
+			push();
+			translate(movement + this.layout.leftMargin + 25 , height - this.layout.topMargin - result);
+			rotate(radians(-25));
+			fill(0, 200, 220);
+			text(data[i].icon(), 0, 0);
+			pop();
+
+			push();
+			translate(movement + this.layout.leftMargin ,
+				height - this.layout.topMargin  - result);
+			rotate(radians(-90));
+			fill('black');
+			text(data[i].ios(), 0, 0);
+			// text(data[i].population() + ' Billion' , 0, 0);
+			fill(0, 200, 220);
+			pop();
+			previous = data[i];
+		}
+	}
+
+	mapTemperatureToHeight(value) {
+
+		return map(value,
+			this.minPopulation,
+			this.maxPopulation,
+			this.layout.bottomMargin,
+			this.layout.topMargin);
+	};
+
+	/**
+	 *
+	 * @return this
+	 * @param sketch
+	 */
+	static make(data) {
+		return (sketch) => {
+			return new PopulationRace(sketch, data)
+		}
+	}
 }

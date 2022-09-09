@@ -5,7 +5,6 @@ class Gallery {
     }
     // Add a new visualisation to the navigation bar.
     addVisual(vis) {
-        /** @var BaseVisualizer vis */
         // Check that the vis object has an id and name.
         if (!vis.has('id')
             && !vis.has('name')) {
