@@ -1,3 +1,5 @@
+/* It's a class that contains the basic methods that are required for a
+visualisation */
 class BaseVisualizer {
     id; // Name for the visualisation to appear in the menu bar.
     name; // Each visualisation must have a unique ID with no special characters.
@@ -9,45 +11,68 @@ class BaseVisualizer {
         this.id = id;
         this.name = name;
         this.data_path = data_path;
-		this.xAxisLabel = 'year';
-		this.yAxisLabel = '℃';
-		this.years = ['1960', '1970', '1980', '1990', '2000', '2010', '2015', '2020', '2022', '2030', '2050', '2070', '2080'];
+		this.years = ['1970', '1980', '1990', '2000', '2010', '2015', '2020', '2022', '2030', '2050'];
 		this.sketches = [];
 		this.options = [5, 10, 15, 20, 25];
 		this.selectedYear = '1980';
 		this.selectedOption = 5;
 		this.selectedOrder = 'asc';
+		this.mySelect = null;
+		this.title = 'Header';
+		// https://colorhunt.co/palette/f94892ff7f3ffbdf0789cffd
+		this.colors = [
+			'rgb(255, 127, 63)', 'rgb(251, 223, 7)', 'rgb(249, 72, 146)',
+			'rgb(242, 211, 136)', 'rgb(201, 132, 116)', 'rgb(167, 210, 203)',
+			'rgb(135, 76, 98)', 'rgb(85, 73, 148)', 'rgb(22, 33, 62)', 'rgb(83, 52, 131)',
+			'rgb(76, 58, 81)', 'rgb(119, 67, 96)', 'rgb(178, 80, 104)', 'rgb(231, 171, 121)',
+			'rgb(130, 111, 102)', 'rgb(198, 155, 123)', 'rgb(247, 204, 172)', 'rgb(59, 154, 225)',
+			'rgb(59, 154, 225)', 'rgb(33, 225, 225)', 'rgb(240, 234, 190)', 'rgb(255, 220, 174)', 'rgb(255, 220, 174)',
+			'rgb(206, 216, 158)', 'rgb(173, 207, 159)', 'rgb(118, 186, 153)', 'rgb(58, 176, 255)', "rgb(22, 33, 62)",
+			'rgb(249, 242, 237)', 'rgb(255, 181, 98)', 'rgb(248, 116, 116)','rgb(41, 52, 98)',
+			'rgb(28, 214, 206)', 'rgb(254, 219, 57)', 'rgb(254, 219, 57)', 'rgb(214, 28, 78)', 'rgb(249, 72, 146)',
+			'rgb(255, 127, 63)', 'rgb(251, 223, 7)', 'rgb(137, 207, 253)',
+		];
+		// Colors for vertical bar
+		this.colorList = _.sampleSize(this.colors, 5);
+
 		this.onResize()
-		document.addEventListener('splitter::resize', (r) => {
-			console.log(r)
-			this.divWidth = document.querySelector('#' + this.id).offsetWidth;
-			this.divHeight = document.querySelector('#' + this.id).offsetHeight;
-		})
-		document.addEventListener('select::value', ({ detail }) => {
-			this.selectedYear = detail.value();
-		});
-		document.addEventListener('select::option-value', ({ detail }) => {
-			this.selectedOption = detail.value();
-		});
-		document.addEventListener('select::order-value', ({ detail }) => {
-			this.selectedOrder = detail.value();
-		});
-    }
 
-    // Preload the data. This function is called automatically by the
-    // gallery when a visualisation is added.
-    async preload() {
-        await loadTable(
-            this.data_path, 'csv', 'header',
-            // Callback function to set the value
-            // this.loaded to true.
-            (table) => {
-                this.data = table;
-                this.loaded = true;
-            });
-    };
 
-    has(property, type = null) {
+		this.setupListeners();
+	}
+
+	async preload() {
+
+		await loadTable(
+			this.data_path, 'csv', 'header',
+			// Callback function to set the value
+			// this.loaded to true.
+			(table) => {
+				dataTesting = this.data = table;
+				this.loaded = true;
+
+				const setEvent = new CustomEvent('data::set', {
+					bubbles: true,
+					detail: { data: () => this.data, rawData: () => this.rawData }
+				});
+
+				document.dispatchEvent(setEvent)
+			});
+	}
+
+	destroy() {
+		this.optionSelect.remove();
+		this.orderSelect.remove();
+		if(this.mySelect) {
+			this.mySelect.remove();
+		}
+		this.orderLabel.remove();
+		this.optionsLabel.remove();
+		this.yearLabel.remove();
+
+	}
+
+	has(property, type = null) {
         return ['function'].includes(type || '') ?
             typeof this[property] === type :
             this.hasOwnProperty(property);
@@ -60,6 +85,7 @@ class BaseVisualizer {
 
     // ------------------- Implementation required --------------- //
     setup() {
+		header.elt.innerHTML = this.title
         // this.throwError('setup');
     }
 
@@ -96,9 +122,6 @@ class BaseVisualizer {
 		this.convas.id(`id-${this.id}`);
 		this.convas.parent(holder)
 	}
-
-	//	MOVE IT
-
 
 	/**
 	 * It checks if the object has a property.
@@ -245,19 +268,22 @@ class BaseVisualizer {
 	}
 	getMinValue() {
 		let min = this.getCurrentSelectedYearData().minBy((e) => Number(e.get('population'))).value();
+		// console.log(min)
 		return min.get('population');
 	}
 
 
 	setupSelect() {
-		P5Element.make('label', 'Years: ')
+		this.yearLabel = P5Element.make('label', 'Years: ')
 			.attribute('for', this.id)
-			.parent(toolHolder);
+			.parent(toolHolder)
+			.getInstance();
 
-		selectYears = this.mySelect = P5Element.createSelect()
+		this.mySelect = P5Element.createSelect()
 			.id(this.id)
 			.addClass(this.id)
-			.addClass('input');
+			.addClass('input')
+			.addClass('selectable');
 		this.mySelect.parent(toolHolder)
 
 		this.mySelect.changed(this.changed)
@@ -274,9 +300,10 @@ class BaseVisualizer {
 	 */
 	setupSelectOption() {
 
-		P5Element.make('label', 'Options: ')
+		this.optionsLabel = P5Element.make('label', 'Options: ')
 			.attribute('for', `option-${this.id}`)
-			.parent(toolHolder);
+			.parent(toolHolder)
+			.getInstance();
 
 		this.optionSelect = P5Element.createSelect()
 			.id(`option-${this.id}`)
@@ -298,9 +325,10 @@ class BaseVisualizer {
 	 */
 	setupSelectOrder() {
 
-		P5Element.make('label', 'Order: ')
+		this.orderLabel = P5Element.make('label', 'Order: ')
 			.attribute('for', `order-${this.id}`)
-			.parent(toolHolder);
+			.parent(toolHolder)
+			.getInstance();
 
 		this.orderSelect = P5Element.createSelect()
 			.id(`order-${this.id}`)
@@ -362,4 +390,57 @@ class BaseVisualizer {
 
 		document.dispatchEvent(eventSelectOption)
 	}
+
+	/**
+	 * > This function takes the data from the Google Spreadsheet and creates an array
+	 * of Row objects
+	 */
+	setupRows() {
+
+		this.rawData = this.data.getRows().map((e) => {
+			return new Row({
+				name: e.getString('name'),
+				growthRate: e.getNum('growthRate'),
+				worldPercentage: e.getNum('worldPercentage'), // density: e.getString('density'),
+				rank: e.getNum('rank'),
+				population: e.getNum('puplistion'),
+				year: e.getNum('year'),
+				icon: e.getString('icon'),
+				ios: e.getString('ios-code')
+			});
+		});
+	}
+
+
+	/**
+	 * It listens for events from the select component and the splitter component, and
+	 * then updates the values of the variables that are used to render the chart
+	 */
+	setupListeners() {
+
+		document.addEventListener('splitter::resize', (r) => {
+			this.divWidth = document.querySelector('#' + this.id).offsetWidth;
+			this.divHeight = document.querySelector('#' + this.id).offsetHeight;
+		})
+		document.addEventListener('select::value', ({detail}) => {
+			this.selectedYear = detail.value();
+			if (this.hasMethod('prepare')) {
+				this.prepare()
+			}
+		});
+		document.addEventListener('select::option-value', ({detail}) => {
+			this.selectedOption = detail.value();
+			if (this.hasMethod('prepare')) {
+				this.prepare()
+			}
+		});
+		document.addEventListener('select::order-value', ({detail}) => {
+			this.selectedOrder = detail.value();
+
+			if (this.hasMethod('prepare')) {
+				this.prepare()
+			}
+		});
+	}
+
 }

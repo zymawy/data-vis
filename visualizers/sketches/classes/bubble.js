@@ -1,4 +1,6 @@
+/* It's a class that represents a bubble on the screen */
 class Bubble {
+
 	constructor(x, y, pop, count,colour, config = {}) {
 		this.x = x;
 		this.y = y;
@@ -12,22 +14,13 @@ class Bubble {
 
 	draw () {
 		fill(this.colour);
-		this.size = map(this.count, this.config.min, this.config.max, 100, 200);
-		// if (Math.abs(this.size) <= 1) {
-		//
-		// } else if(Math.abs(this.size) > 00) {
-		// 	this.size = this.size / this.pop.population()
-		// }
-		// console.log(this.pop.icon(), this.size)
-		// console.log(this.pop.iosCode, this.size, Math.abs(this.size), 'Math.abs(this.size)')
+		this.size = map(this.count, this.config.min, this.config.max, 100, 530);
 		ellipse(this.x, this.y, this.size);
 		fill(0);
 		textSize(10)
 		textAlign(CENTER, CENTER);
 		text(this.pop.ios()  + " " + this.pop.icon(), this.x, this.y);
 		stroke(42)
-		// line(this.x, this.y, 85, 20);
-		// textSize(this.pop.rank * 5)
 		text(this.pop.population(), this.x, this.y + 20);
 	}
 

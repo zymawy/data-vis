@@ -1,6 +1,4 @@
-/* "The Row class is a wrapper for a row of data."
-
-The Row class is a wrapper for a row of data */
+/* The Row class is a wrapper for a row of data. */
 class Row {
 	constructor(data) {
 		this._data = data;

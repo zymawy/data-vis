@@ -2,6 +2,7 @@ class ClimateChange extends BaseVisualizer {
 
   constructor() {
     super('climate-change', 'Climate Change', './../data/surface-temperature/surface-temperature.csv');
+	this.title = 'Climate Change'
     // Names for each axis.
     this.xAxisLabel = 'year';
     this.yAxisLabel = '℃';
@@ -12,6 +13,7 @@ class ClimateChange extends BaseVisualizer {
   }
 
   setup() {
+	  super.setup()
     // Font defaults.
     textSize(16);
     textAlign('center', 'center');

@@ -5,6 +5,7 @@ class PayGapByJob2017 extends BaseVisualizer{
         this.pad = 20;
         this.dotSizeMin = 15;
         this.dotSizeMax = 40;
+		this.title = 'Pay gap by job: 2017'
     }
 
     draw() {

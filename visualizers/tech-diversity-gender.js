@@ -2,8 +2,7 @@ class TechDiversityGender extends BaseVisualizer{
 
   constructor() {
     super('tech-diversity-gender','Tech Diversity: Gender',  './data/tech-diversity/gender-2018.csv');
-    // Layout object to store all common plot layout parameters and
-    // methods.
+	  this.title = 'Tech Diversity: Gender'
     this.prepare();
 
     // Middle of the plot: for 50% line.
@@ -15,6 +14,7 @@ class TechDiversityGender extends BaseVisualizer{
   }
 
   setup () {
+	  super.setup()
     // Font defaults.
     textSize(16);
   };

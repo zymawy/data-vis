@@ -7,7 +7,7 @@ var holder;
 var canvasWidth;
 var ulWrapper;
 var toolHolder;
-var selectYears = null;
+var header;
 
 function setup() {
   // Create a canvas to fill the content div from index.html.
@@ -18,7 +18,7 @@ function setup() {
     .addClass('header')
     .addClass('shadow-box')
 
-  let header = p5Element.make('div', 'Header')
+	header = p5Element.make('div', 'Header')
     .addClass('canvas-header')
     .getInstance();
 
@@ -31,9 +31,6 @@ function setup() {
     .addClass('shadow-box')
     .child(header)
     .getInstance();
-
-  // canvasWidth = min(holder.elt.offsetWidth, 1024);
-  // createCanvas(canvasWidth, 776).parent(holder);
 
   // lets create our lovely ul!
   var ul = p5Element.make('ul', '')
@@ -57,6 +54,9 @@ function setup() {
 
 	canvasWrapper = p5Element.make('div', '')
 		.id('canvas-holder')
+		// .style('height', '20px')
+		.style('background', 'blue')
+		.style('position', 'relative')
 		.addClass('canvas-holder');
 
   // let's create give a label for our tool area!
@@ -121,7 +121,7 @@ function setup() {
   // }
 
   Split({
-    minSize: 300,
+    minSize: 400,
     maxSize: 1000,
     snapOffset: 10,
     dragInterval: 3,

@@ -11,7 +11,7 @@ class PopulationSimple extends BaseVisualizer {
 		// index which will increase at regular intervals
 		this.index = 0;
 		this.t = 0;
-
+		this.title = 'Population Bubble 📊'
 		this.boxes = [];
 
 	}
@@ -20,44 +20,15 @@ class PopulationSimple extends BaseVisualizer {
 		this.mySelect.remove();
 		this.optionSelect.remove();
 		this.orderSelect.remove();
-	};
-	async preload() {
-		await loadTable(
-			this.data_path, 'csv', 'header',
-			// Callback function to set the value
-			// this.loaded to true.
-			(table) => {
-				dataTesting = this.data = table;
-				this.numRows = this.data.getRowCount();
-				this.numCols = this.data.getColumnCount();
-
-				// console.trace();
-				this.loaded = true;
-				// let's get going and notify our main class :)
-				const eventAwesome = new CustomEvent('data::set', {
-					bubbles: true,
-					detail: { data: () => this.data, rawData: () => this.rawData }
-				});
-				// let's dispatch it !
-				document.dispatchEvent(eventAwesome)
-			});
+		this.orderLabel.remove();
+		this.optionsLabel.remove();
+		this.yearLabel.remove();
 	};
 
 	setup() {
+		super.setup()
 
-		this.rawData = this.data.getRows().map((e) => {
-			return new Row({
-				name: e.getString('name'),
-				growthRate: e.getNum('growthRate'),
-				worldPercentage: e.getNum('worldPercentage'),
-				// density: e.getString('density'),
-				rank: e.getNum('rank'),
-				population: e.getNum('puplistion'),
-				year: e.getNum('year'),
-				icon: e.getString('icon'),
-				ios: e.getString('ios-code')
-			});
-		});
+		this.setupRows();
 
 		// initales the tools !
 		this.setupSelect()

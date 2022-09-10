@@ -9,7 +9,9 @@ Array.prototype.min = function() {
     return Math.min.apply(null, this);
 };
 
+/* It's defining a set of functions that can be used by other objects. */
 const HelperMixins = {
+    /* It's defining a set of functions that can be used by other objects. */
     sum(data) {
         var total = 0;
 
@@ -23,12 +25,14 @@ const HelperMixins = {
         return total;
     },
 
+    /* It's defining a set of functions that can be used by other objects. */
     mean(data) {
         var total = this.sum(data);
 
         return total / data.length;
     },
 
+    /* It's defining a set of functions that can be used by other objects. */
     sliceRowNumbers(row, start = 0, end) {
         var rowData = [];
 
@@ -44,7 +48,8 @@ const HelperMixins = {
         return rowData;
     },
 
-    stringsToNumbers(array) {
+   /* It's converting an array of strings to an array of numbers. */
+     stringsToNumbers(array) {
         return array.map(Number);
     },
 
@@ -52,6 +57,7 @@ const HelperMixins = {
 // Plotting helper functions
 // --------------------------------------------------------------------
 
+    /* It's defining a set of functions that can be used by other objects. */
     drawAxis(layout, colour = 0) {
         stroke(color(colour));
 
@@ -68,6 +74,7 @@ const HelperMixins = {
             layout.bottomMargin);
     },
 
+    /* It's defining a set of functions that can be used by other objects. */
     drawAxisLabels(xLabel, yLabel, layout) {
         fill(0);
         noStroke();
@@ -87,6 +94,7 @@ const HelperMixins = {
         pop();
     },
 
+    /* It's defining a set of functions that can be used by other objects. */
     drawYAxisTickLabels(min, max, layout, mapFunction,
                         decimalPlaces) {
         // Map function must be passed with .bind(this).
@@ -115,6 +123,7 @@ const HelperMixins = {
         }
     },
 
+    /* It's defining a set of functions that can be used by other objects. */
     drawXAxisTickLabel(value, layout, mapFunction) {
         // Map function must be passed with .bind(this).
         var x = mapFunction(value);
@@ -138,6 +147,10 @@ const HelperMixins = {
         }
     },
 
+	/**
+	 * The function takes in any number of arguments, and logs them to the console
+	 * @param value - The value to be logged.
+	 */
 	dd(...value) {
 		console.log(value);
 
