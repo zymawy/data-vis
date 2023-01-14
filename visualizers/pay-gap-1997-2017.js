@@ -2,7 +2,7 @@
 class PayGapTimeSeries extends BaseVisualizer {
 
 	constructor() {
-		super('pay-gap-timeseries', 'Pay gap: 1997-2017', 'data-vis/data/pay-gap/all-employees-hourly-pay-by-gender-1997-2017.csv');
+		super('pay-gap-timeseries', 'Pay gap: 1997-2017', 'data/pay-gap/all-employees-hourly-pay-by-gender-1997-2017.csv');
 		// Title to display above the plot.
 		this.title = 'Gender Pay Gap: Average difference between male and female pay.';
 		// Names for each axis.

@@ -1,6 +1,6 @@
 class PayGapByJob2017 extends BaseVisualizer{
     constructor() {
-        super('pay-gap-by-job-2017', 'Pay gap by job: 2017',  'data-vis/data/pay-gap/occupation-hourly-pay-by-gender-2017.csv');
+        super('pay-gap-by-job-2017', 'Pay gap by job: 2017',  'data/pay-gap/occupation-hourly-pay-by-gender-2017.csv');
         // Graph properties.
         this.pad = 20;
         this.dotSizeMin = 15;

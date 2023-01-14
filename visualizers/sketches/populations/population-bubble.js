@@ -1,6 +1,6 @@
 class PopulationBubble extends BaseVisualizer {
 	constructor() {
-		super('population-bubble', 'Population Bubble', 'data-vis/data/world-population/world-population.csv');
+		super('population-bubble', 'Population Bubble', 'data/world-population/world-population.csv');
 		this.id = 'population-bubble';
 
 		this.bubbles = [];
