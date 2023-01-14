@@ -8,6 +8,7 @@ class BaseVisualizer {
     loaded = false;
 
     constructor(id, name, data_path) {
+		console.log(data_path)
         this.id = id;
         this.name = name;
         this.data_path = data_path;
