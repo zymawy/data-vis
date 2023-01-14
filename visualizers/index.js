@@ -11,7 +11,10 @@
     ClimateChange,
     PieChart,
     Htmlable,
-    WorldPopulation,
+
+    PopulationSimple,
+    PopulationBubble,
+	PopulationComparison,
     // SketchBase
 ].forEach((clss) => {
     Object.assign(clss.prototype, HelperMixins);

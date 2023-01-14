@@ -3,6 +3,7 @@ class TechDiversityRace extends BaseVisualizer {
 
   constructor() {
     super('tech-diversity-race', 'Tech Diversity: Race', './../data/tech-diversity/race-2018.csv');
+	this.title = 'Tech Diversity: Race'
     // Create a new pie chart object.
     this.pie = new PieChart(width / 2, height / 2, width * 0.4);
 
@@ -10,6 +11,7 @@ class TechDiversityRace extends BaseVisualizer {
   }
 
   setup () {
+	  super.setup()
     if (!this.loaded) {
       console.log('Data not yet loaded');
       return;
