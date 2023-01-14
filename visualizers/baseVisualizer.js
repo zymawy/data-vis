@@ -8,10 +8,9 @@ class BaseVisualizer {
     loaded = false;
 
     constructor(id, name, data_path) {
-		console.log(data_path)
         this.id = id;
         this.name = name;
-        this.data_path = '/data-vis/' + data_path;
+        this.data_path = data_path;
 		this.years = ['1970', '1980', '1990', '2000', '2010', '2015', '2020', '2022', '2030', '2050'];
 		this.sketches = [];
 		this.options = [5, 10, 15, 20, 25];
@@ -44,8 +43,9 @@ class BaseVisualizer {
 
 	async preload() {
 
+		console.log(this.data_path);
 		await loadTable(
-			this.data_path, 'csv', 'header',
+			"/data-vis/" + this.data_path, 'csv', 'header',
 			// Callback function to set the value
 			// this.loaded to true.
 			(table) => {
