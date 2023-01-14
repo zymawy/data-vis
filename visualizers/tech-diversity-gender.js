@@ -1,7 +1,7 @@
 class TechDiversityGender extends BaseVisualizer{
 
   constructor() {
-    super('tech-diversity-gender','Tech Diversity: Gender',  '../data/tech-diversity/gender-2018.csv');
+    super('tech-diversity-gender','Tech Diversity: Gender',  'data-vis/data/tech-diversity/gender-2018.csv');
 	  this.title = 'Tech Diversity: Gender'
     this.prepare();
 

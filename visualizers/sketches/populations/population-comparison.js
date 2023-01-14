@@ -1,6 +1,6 @@
 class PopulationComparison extends BaseVisualizer {
 	constructor() {
-		super('population-comparison', 'Population Comparison', '../data/world-population/world-population.csv');
+		super('population-comparison', 'Population Comparison', 'data-vis/data/world-population/world-population.csv');
 		this.id = 'population-comparison';
 		this.title = 'Population Comparison ✨'
 		var marginSize = 40;

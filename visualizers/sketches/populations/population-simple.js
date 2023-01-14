@@ -1,6 +1,6 @@
 class PopulationSimple extends BaseVisualizer {
 	constructor() {
-		super('population-simple', 'Population Simple', '../data/world-population/world-population.csv');
+		super('population-simple', 'Population Simple', 'data-vis/data/world-population/world-population.csv');
 		// Graph properties.
 		this.pad = 20;
 		this.dotSizeMin = 15;

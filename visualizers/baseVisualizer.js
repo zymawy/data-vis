@@ -45,7 +45,7 @@ class BaseVisualizer {
 
 		console.log(this.data_path);
 		await loadTable(
-			"data-vis/" + this.data_path, 'csv', 'header',
+			this.data_path, 'csv', 'header',
 			// Callback function to set the value
 			// this.loaded to true.
 			(table) => {

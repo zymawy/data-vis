@@ -1,7 +1,7 @@
 class ClimateChange extends BaseVisualizer {
 
   constructor() {
-    super('climate-change', 'Climate Change', '../data/surface-temperature/surface-temperature.csv');
+    super('climate-change', 'Climate Change', 'data-vis/data/surface-temperature/surface-temperature.csv');
 	this.title = 'Climate Change'
     // Names for each axis.
     this.xAxisLabel = 'year';
